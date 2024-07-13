@@ -4,32 +4,49 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
+import { MultiLevelSidebar } from '@/Components/MultiLevelSidebar';
+import 'boxicons'
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+    const [showSidebar, setShowSidebar] = useState(true);
+
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <nav className="bg-white border-b border-gray-100">
+            <nav className=" border-b bg-[#5F9EA0] border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
-                            <div className="shrink-0 flex items-center">
+                            <div className="shrink-0 gap-x-10 flex items-center">
+
                                 <Link href="/">
                                     <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
                                 </Link>
+                                <div className='flex gap-x-2 justify-center items-center'>
+                                    {!showSidebar && (
+                                        <h5 className='block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-blue-gray-900'>Gets Validator</h5>
+                                    )}
+                                    <button
+                                        onClick={() => setShowSidebar(!showSidebar)}
+                                        className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                                    >
+                                        <box-icon name='menu'></box-icon>
+                                    </button>
+                                </div>
+
                             </div>
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            {/*   <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink href={route('dashboard')} active={route().current('dashboard')}>
                                     Dashboard
                                 </NavLink>
 
-                            </div>
+                            </div> */}
 
                         </div>
 
-                        <div className="hidden sm:flex sm:items-center sm:ms-6">
+                        {/*  <div className="hidden sm:flex sm:items-center sm:ms-6">
                             <div className="ms-3 relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
@@ -64,7 +81,7 @@ export default function Authenticated({ user, header, children }) {
                                     </Dropdown.Content>
                                 </Dropdown>
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="-me-2 flex items-center sm:hidden">
                             <button
@@ -115,13 +132,17 @@ export default function Authenticated({ user, header, children }) {
                 </div>
             </nav>
 
-            {header && (
-                <header className="bg-white shadow">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
-                </header>
-            )}
 
-            <main>{children}</main>
+            <main className="flex flex-grow">
+                {showSidebar && (
+                    <div className="">
+                        <MultiLevelSidebar />
+                    </div>
+                )}
+                <div className="flex-grow">
+                    {children}
+                </div>
+            </main>
         </div>
     );
 }

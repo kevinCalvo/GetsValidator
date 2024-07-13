@@ -5,7 +5,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, Link, usePage } from "@inertiajs/react";
 import 'flowbite';
 
-export default function Dashboard({ auth }) {
+export default function PageScanner({ auth }) {
     const { data, setData, post, processing, errors } = useForm({
         documento: '',
         tipodoc: 'CC',
@@ -33,36 +33,20 @@ export default function Dashboard({ auth }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Consulta por documento</h2>}
+
         >
-            <Head title="Consulta por documento" />
+            <Head title="Consulta Scanner" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white p-4 overflow-hidden shadow-sm sm:rounded-lg">
                         <form method="POST" onSubmit={handleSubmit} className="max-w-sm ">
                             <div className="mb-5">
-                                <label htmlFor="documento" className="block mb-2 text-lg font-medium text-gray-900">Consulta por documento</label>
+                                <label htmlFor="documento" className="block mb-2 text-lg font-medium text-gray-900">Escanear cédula</label>
 
-                                <input type="text" id="documento" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Documento a consultar" onChange={(e) =>
+                                <input type="text" id="documento" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Escanear cédula" onChange={(e) =>
                                     setData("documento", e.target.value)
                                 } required />
-                            </div>
-                            <div className='mb-5'>
-                                <label htmlFor="tipodoc" className="block mb-2 text-lg font-medium text-gray-900">Tipo de documento</label>
-                                <select value={data.tipodoc} id="tipodoc" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" onChange={(e) =>
-                                    setData("tipodoc", e.target.value)
-                                } >
-                                    <option value='CC'>CC</option>
-                                    <option value='nombre'>NOMBRE</option>
-                                </select>
-                            </div>
-
-                            <div className="mb-5">
-                                <label htmlFor="date" className="block mb-2 text-lg font-medium text-gray-900">Fecha de expedición (Opcional) </label>
-                                <input type="date" id="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" onChange={(e) =>
-                                    setData("date", e.target.value)
-                                } />
                             </div>
                             <div>
                                 <h3 class="mb-4 font-semibold text-gray-900">Tipo</h3>
