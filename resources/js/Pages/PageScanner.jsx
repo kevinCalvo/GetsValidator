@@ -90,13 +90,13 @@ export default function PageScanner({ auth }) {
                                 <ul class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex">
                                     <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
                                         <div class="flex items-center ps-3">
-                                            <input id="vue-radio-list" name="tipo" type="radio" value="visitante" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" onChange={(e) => setData("value", e.target.value)} />
+                                            <input id="vue-radio-list" name="tipo" type="radio" value="visitante" class="w-4 h-4 text-[#9c60b4] bg-gray-100 border-gray-300 " onChange={(e) => setData("value", e.target.value)} />
                                             <label for="vue-radio-list" class="w-full py-3 ms-2 text-sm font-medium text-gray-900">Visitante</label>
                                         </div>
                                     </li>
                                     <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
                                         <div class="flex items-center ps-3">
-                                            <input onChange={(e) => setData("value", e.target.value)} id="react-radio-list" name="tipo" type="radio" value="operador" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" />
+                                            <input onChange={(e) => setData("value", e.target.value)} id="react-radio-list" name="tipo" type="radio" value="operador" class="w-4 h-4 text-[#9c60b4] bg-gray-100 border-gray-300 " />
                                             <label for="react-radio-list" class="w-full py-3 ms-2 text-sm font-medium text-gray-900">Operador</label>
                                         </div>
                                     </li>
@@ -107,7 +107,7 @@ export default function PageScanner({ auth }) {
                                 {formError && <p className="text-red-500 text-sm">{formError}</p>}
                             </div>
 
-                            <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Ver reporte</button>
+                            <button type="submit" className="text-white bg-[#9c60b4] hover:bg-[#C39BD3] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Ver reporte</button>
                         </form>
                     </div>
                 </div>

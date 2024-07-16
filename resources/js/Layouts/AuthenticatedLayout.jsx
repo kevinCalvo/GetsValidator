@@ -14,14 +14,14 @@ export default function Authenticated({ user, header, children }) {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <nav className=" border-b bg-[#5F9EA0] border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav className=" border-b bg-[#C39BD3] border-gray-100">
+                <div className="max-w-7xl  px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
                             <div className="shrink-0 gap-x-10 flex items-center">
 
                                 <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                    <img src="img/r-Gets.png" className="block h-9 w-auto fill-current text-gray-800" />
                                 </Link>
                                 <div className='flex gap-x-2 justify-center items-center'>
                                     {!showSidebar && (
