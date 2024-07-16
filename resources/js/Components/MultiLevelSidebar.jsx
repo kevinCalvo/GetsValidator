@@ -103,7 +103,7 @@ export function MultiLevelSidebar() {
                         <ListItemPrefix>
                             <PowerIcon className="h-5 w-5" />
                         </ListItemPrefix>
-                        <NavLink href={route('logout')}>
+                        <NavLink as="button" method="post" href={route('logout')}>
                             Cerrar sesion
                         </NavLink>
 
