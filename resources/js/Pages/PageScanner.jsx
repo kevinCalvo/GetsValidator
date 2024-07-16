@@ -4,6 +4,8 @@ import Sidebar from '@/Components/Sidebar';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, Link, usePage } from "@inertiajs/react";
 import 'flowbite';
+import React, { useState, useEffect } from "react";
+import Swal from 'sweetalert2';
 
 export default function PageScanner({ auth }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -12,10 +14,32 @@ export default function PageScanner({ auth }) {
         date: '',
         value: ''
     });
+    const { flash } = usePage().props;
+    const [formError, setFormError] = useState(null);
+
+    useEffect(() => {
+        if (flash && flash.error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: flash.errors.error,
+            });
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: flash.errors.error,
+            });
+        }
+    }, [flash]);
+
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
 
+        e.preventDefault();
+        if (!data.acceptedTerms) {
+            setFormError('Debes aceptar los términos para continuar.');
+            return;
+        }
         try {
             await post(route("antecedentes"), {
                 onSuccess: () => {
@@ -24,11 +48,24 @@ export default function PageScanner({ auth }) {
                 onError: (errors) => {
                     console.log("error en validacion");
                     console.log(errors);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Errores de validación',
+                        html: `
+                            <ul>
+                                ${Object.values(errors).map(error => `<li>${error}</li>`).join('')}
+                            </ul>
+                        `,
+                    });
                 },
             });
         } catch (error) {
             console.error("Error al enviar el formulario:", error);
         }
+    };
+    const handleCheckboxChange = (event) => {
+        setData("acceptedTerms", event.target.checked);
+        setFormError(null);
     };
     return (
         <AuthenticatedLayout
@@ -46,7 +83,7 @@ export default function PageScanner({ auth }) {
 
                                 <input type="text" id="documento" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Escanear cédula" onChange={(e) =>
                                     setData("documento", e.target.value)
-                                } required />
+                                } />
                             </div>
                             <div>
                                 <h3 class="mb-4 font-semibold text-gray-900">Tipo</h3>
@@ -66,8 +103,8 @@ export default function PageScanner({ auth }) {
                                 </ul>
                             </div>
                             <div className='my-3'>
-                                <CheckboxWithLink />
-
+                                <CheckboxWithLink checked={data.acceptedTerms} onChange={handleCheckboxChange} />
+                                {formError && <p className="text-red-500 text-sm">{formError}</p>}
                             </div>
 
                             <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Ver reporte</button>

@@ -1,6 +1,6 @@
 import { Checkbox, Typography } from "@material-tailwind/react";
 
-export function CheckboxWithLink() {
+export function CheckboxWithLink({ checked, onChange }) {
     return (
         <Checkbox
             label={
@@ -8,6 +8,7 @@ export function CheckboxWithLink() {
                     Declaro que cuento con la autorización del titular que será consultado, de acuerdo con los siguientes términos.
                 </Typography>
             }
-        />
+            checked={checked}
+            onChange={onChange} />
     );
 }

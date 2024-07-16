@@ -105,159 +105,172 @@ const Reporte = ({ auth, data }) => {
                             </div>
                         </div>
                     )}
-
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
-                        <p className="text-xl font-semibold mb-5">Listas y Personas Expuestas Políticamente (PEPs)</p>
-                        {Object.keys(groupedPeps).length === 0 ? (
-                            <p>No se encontraron registros.</p>
-                        ) : (
-                            Object.entries(groupedPeps).map(([category, items]) => (
-                                <div key={category} className="mb-4">
-                                    <p className="text-lg font-bold">{category}</p>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                        {items.map((pep, index) => (
-                                            <div key={index} className="flex gap-2 flex-col">
-                                                <p className="font-semibold">Nombre Completo:</p>
-                                                <p>{pep.NOMBRECOMPLETO}</p>
-                                                <p className="font-semibold">Categoría:</p>
-                                                <p>{pep.CATEGORIA}</p>
-                                                <p className="font-semibold">Estado:</p>
-                                                <p>{pep.ESTADO}</p>
-                                                <p className="font-semibold">Fecha de Actualización:</p>
-                                                <p>{pep.FECHA_UPDATE}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
-
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
-                        {/* <p className="text-xl font-semibold mb-5">PEPs Consolidado</p> */}
-                        {Object.keys(groupedPepsConsolidado).length === 0 ? (
-                            <p>No se encontraron registros.</p>
-                        ) : (
-                            Object.entries(groupedPepsConsolidado).map(([category, items]) => (
-                                <div key={category} className="mb-4">
-                                    <p className="text-lg font-bold mb-4">{category}</p>
-                                    <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-x-2 gap-y-6">
-                                        {items.map((pep, index) => (
-                                            <div key={index} className="grid grid-cols-2 gap-2 items-center">
-                                                <p>{pep.nombre_lista}</p>
-                                                <p className="text-gray-500">registro no encontrado</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
-
-
-
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
-                        <p className="text-xl font-semibold mb-5">Lista Clinton (OFAC), Búsqueda por Documento</p>
-                        <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
-                            <div className="flex gap-2 flex-col">
-                                <p className="text-gray-500">{ofac ? ofac : "No registra en la fuente"}</p>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
-                        <p className="text-xl font-semibold mb-5">Lista Clinton (OFAC), Búsqueda por Nombre
-                        </p>
-                        <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
-                            <div className="flex gap-2 flex-col">
-                                <p className="text-gray-500">{ofac_nombre ? ofac_nombre : "No registra en la fuente"}</p>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
-                        <p className="text-xl font-semibold mb-5"> Consejo de Seguridad de la Naciones Unidas (ONU)
-                        </p>
-                        <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
-                            <div className="flex gap-2 flex-col">
-                                <p className="text-gray-500">{lista_onu ? lista_onu : "No registra en la fuente"}</p>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
-                        <p className="text-xl font-semibold mb-5"> European Union Most Wanted List (EUROPOL)
-                        </p>
-                        <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
-                            {europol.length === 0 ? (
-                                <p className='text-gray-500'>No registra en la fuente</p>
+                    {groupedPeps && (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5">Listas y Personas Expuestas Políticamente (PEPs)</p>
+                            {Object.keys(groupedPeps).length === 0 ? (
+                                <p>No se encontraron registros.</p>
                             ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
-                                    {europol.map((item, index) => (
-                                        <div key={index} className="flex gap-2 flex-col">
-                                            <p>{item}</p>
-
+                                Object.entries(groupedPeps).map(([category, items]) => (
+                                    <div key={category} className="mb-4">
+                                        <p className="text-lg font-bold">{category}</p>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                            {items.map((pep, index) => (
+                                                <div key={index} className="flex gap-2 flex-col">
+                                                    <p className="font-semibold">Nombre Completo:</p>
+                                                    <p>{pep.NOMBRECOMPLETO}</p>
+                                                    <p className="font-semibold">Categoría:</p>
+                                                    <p>{pep.CATEGORIA}</p>
+                                                    <p className="font-semibold">Estado:</p>
+                                                    <p>{pep.ESTADO}</p>
+                                                    <p className="font-semibold">Fecha de Actualización:</p>
+                                                    <p>{pep.FECHA_UPDATE}</p>
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
-                                </div>
+                                    </div>
+                                ))
                             )}
                         </div>
-                    </div>
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
-                        <p className="text-xl font-semibold mb-5">Organización Internacional de Policía Criminal (INTERPOL)
-                        </p>
-                        <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
-                            <div className="flex gap-2 flex-col">
-                                <p className="text-gray-500">{interpol ? interpol : "No registra en la fuente"}</p>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
-                        <p className="text-xl font-semibold mb-5"> Procuraduría General de la Nación (Consulta en Línea)
-                        </p>
-                        <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
-                            {procuraduria.length === 0 ? (
-                                <p className='text-gray-500'>No registra en la fuente</p>
+                    )}
+                    {groupedPepsConsolidado && (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            {/* <p className="text-xl font-semibold mb-5">PEPs Consolidado</p> */}
+                            {Object.keys(groupedPepsConsolidado).length === 0 ? (
+                                <p>No se encontraron registros.</p>
                             ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
-                                    {procuraduria.map((item, index) => (
-                                        <div key={index} className="flex gap-2 flex-col">
-                                            <p>{item}</p>
-
+                                Object.entries(groupedPepsConsolidado).map(([category, items]) => (
+                                    <div key={category} className="mb-4">
+                                        <p className="text-lg font-bold mb-4">{category}</p>
+                                        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-x-2 gap-y-6">
+                                            {items.map((pep, index) => (
+                                                <div key={index} className="grid grid-cols-2 gap-2 items-center">
+                                                    <p>{pep.nombre_lista}</p>
+                                                    <p className="text-gray-500">registro no encontrado</p>
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
-                                </div>
+                                    </div>
+                                ))
                             )}
                         </div>
-                    </div>
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
-                        <p className="text-xl font-semibold mb-5">Contraloría General de la República (Consulta en Línea)
-                        </p>
-                        <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
-                            <div className="flex gap-2 flex-col">
-                                <p className="text-gray-500">{contraloria ? contraloria : "No registra en la fuente"}</p>
-                            </div>
+                    )}
 
-                        </div>
-                    </div>
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
-                        <p className="text-xl font-semibold mb-5">Contaduría General de la Nación
-                        </p>
-                        {contaduria ? (
-                            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mb-5">
+                    {ofac && (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5">Lista Clinton (OFAC), Búsqueda por Documento</p>
+                            <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
                                 <div className="flex gap-2 flex-col">
-                                    <p>{data.contaduria_hallazgo}</p>
-                                    <a className='text-blue-600' href={data.contaduria_pdf}>Descargar certificado PDF</a>
+                                    <p className="text-gray-500">{ofac ? ofac : "No registra en la fuente"}</p>
                                 </div>
+
                             </div>
-                        ) : (
-                            <p className='text-gray-500'>No se encontró registro</p>
-                        )}
-                    </div>
+                        </div>
+                    )}
+                    {ofac_nombre && (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5">Lista Clinton (OFAC), Búsqueda por Nombre
+                            </p>
+                            <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
+                                <div className="flex gap-2 flex-col">
+                                    <p className="text-gray-500">{ofac_nombre ? ofac_nombre : "No registra en la fuente"}</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    )}
+                    {lista_onu && (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5"> Consejo de Seguridad de la Naciones Unidas (ONU)
+                            </p>
+                            <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
+                                <div className="flex gap-2 flex-col">
+                                    <p className="text-gray-500">{lista_onu ? lista_onu : "No registra en la fuente"}</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    )}
+                    {europol && (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5"> European Union Most Wanted List (EUROPOL)
+                            </p>
+                            <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
+                                {europol.length === 0 ? (
+                                    <p className='text-gray-500'>No registra en la fuente</p>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
+                                        {europol.map((item, index) => (
+                                            <div key={index} className="flex gap-2 flex-col">
+                                                <p>{item}</p>
+
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                    {interpol && (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5">Organización Internacional de Policía Criminal (INTERPOL)
+                            </p>
+                            <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
+                                <div className="flex gap-2 flex-col">
+                                    <p className="text-gray-500">{interpol ? interpol : "No registra en la fuente"}</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    )}
+                    {procuraduria && (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5"> Procuraduría General de la Nación (Consulta en Línea)
+                            </p>
+                            <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
+                                {procuraduria.length === 0 ? (
+                                    <p className='text-gray-500'>No registra en la fuente</p>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
+                                        {procuraduria.map((item, index) => (
+                                            <div key={index} className="flex gap-2 flex-col">
+                                                <p>{item}</p>
+
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                    {contraloria && (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5">Contraloría General de la República (Consulta en Línea)
+                            </p>
+                            <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
+                                <div className="flex gap-2 flex-col">
+                                    <p className="text-gray-500">{contraloria ? contraloria : "No registra en la fuente"}</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    )}
+                    {contaduria && (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5">Contaduría General de la Nación
+                            </p>
+                            {contaduria ? (
+                                <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mb-5">
+                                    <div className="flex gap-2 flex-col">
+                                        <p>{data.contaduria_hallazgo}</p>
+                                        <a className='text-blue-600' href={data.contaduria_pdf}>Descargar certificado PDF</a>
+                                    </div>
+                                </div>
+                            ) : (
+                                <p className='text-gray-500'>No se encontró registro</p>
+                            )}
+                        </div>
+                    )}
                     {defunciones_registraduria && (
                         <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5">Defunciones Registraduria</p>
@@ -278,25 +291,27 @@ const Reporte = ({ auth, data }) => {
                             </div>
                         </div>
                     )}
+                    {insolvencias && (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5"> Insolvencias Supersociedades
+                            </p>
+                            <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
+                                {insolvencias.length === 0 ? (
+                                    <p className='text-gray-500'>No registra en la fuente</p>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
+                                        {insolvencias.map((item, index) => (
+                                            <div key={index} className="flex gap-2 flex-col">
+                                                <p>{item}</p>
 
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
-                        <p className="text-xl font-semibold mb-5"> Insolvencias Supersociedades
-                        </p>
-                        <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
-                            {insolvencias.length === 0 ? (
-                                <p className='text-gray-500'>No registra en la fuente</p>
-                            ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
-                                    {insolvencias.map((item, index) => (
-                                        <div key={index} className="flex gap-2 flex-col">
-                                            <p>{item}</p>
-
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
+                    )}
+
                     <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">Policía Nacional de Colombia
                         </p>

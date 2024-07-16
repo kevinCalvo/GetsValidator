@@ -13,6 +13,17 @@ class TusdatosController extends Controller
     public function antecedentes(Request $request)
     {
         $fecha = date('d/m/Y', strtotime($request->date));
+     /*    dd($request->tipodoc,); */
+        $request->validate([
+            'documento' => 'required|digits_between:6,10',
+            'tipodoc' => 'required',
+            'value' => 'required'
+        ],[
+            'documento.required' => 'El número de cédula es obligatorio.',
+            'documento.digits_between' => 'El número de cédula debe tener entre 6 y 10 dígitos.',
+            'tipodoc.required' => 'El tipo de documento es obligatorio.',
+            'value.required' => 'El campo de tipo es obligatorio.'
+        ]);
 
         $data = [
             'doc' => $request->documento,
@@ -48,7 +59,7 @@ class TusdatosController extends Controller
 
             if ($results->failed()) {
                 Log::error('Error al obtener el reporte', ['response' => $results->body()]);
-                return response()->json(['error' => 'Failed to get report'], 500);
+                return back()->withErrors(['error' => 'Error al obtener el reporte']);
             }
 
             $json = $results->json();

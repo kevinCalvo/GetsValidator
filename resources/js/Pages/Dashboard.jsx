@@ -1,21 +1,42 @@
 import { CheckboxWithLink } from '@/Components/CheckboxWithLink';
-import { MultiLevelSidebar } from '@/Components/MultiLevelSidebar';
-import Sidebar from '@/Components/Sidebar';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, Link, usePage } from "@inertiajs/react";
+import React, { useState, useEffect } from "react";
 import 'flowbite';
+import Swal from 'sweetalert2';
 
 export default function Dashboard({ auth }) {
     const { data, setData, post, processing, errors } = useForm({
         documento: '',
         tipodoc: 'CC',
         date: '',
-        value: ''
+        value: '',
+        acceptedTerms: false,
     });
+    const { flash } = usePage().props;
+    const [formError, setFormError] = useState(null);
+
+    useEffect(() => {
+        if (flash && flash.error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: flash.errors.error,
+            });
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: flash.errors.error,
+            });
+        }
+    }, [flash]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        if (!data.acceptedTerms) {
+            setFormError('Debes aceptar los términos para continuar.');
+            return;
+        }
         try {
             await post(route("antecedentes"), {
                 onSuccess: () => {
@@ -24,11 +45,25 @@ export default function Dashboard({ auth }) {
                 onError: (errors) => {
                     console.log("error en validacion");
                     console.log(errors);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Errores de validación',
+                        html: `
+                            <ul>
+                                ${Object.values(errors).map(error => `<li>${error}</li>`).join('')}
+                            </ul>
+                        `,
+                    });
                 },
             });
         } catch (error) {
             console.error("Error al enviar el formulario:", error);
-        }
+        };
+
+    };
+    const handleCheckboxChange = (event) => {
+        setData("acceptedTerms", event.target.checked);
+        setFormError(null);
     };
     return (
         <AuthenticatedLayout
@@ -46,7 +81,8 @@ export default function Dashboard({ auth }) {
 
                                 <input type="text" id="documento" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Documento a consultar" onChange={(e) =>
                                     setData("documento", e.target.value)
-                                } required />
+                                } />
+
                             </div>
                             <div className='mb-5'>
                                 <label htmlFor="tipodoc" className="block mb-2 text-lg font-medium text-gray-900">Tipo de documento</label>
@@ -82,7 +118,8 @@ export default function Dashboard({ auth }) {
                                 </ul>
                             </div>
                             <div className='my-3'>
-                                <CheckboxWithLink />
+                                <CheckboxWithLink checked={data.acceptedTerms} onChange={handleCheckboxChange} />
+                                {formError && <p className="text-red-500 text-sm">{formError}</p>}
 
                             </div>
 
