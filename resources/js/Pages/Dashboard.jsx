@@ -16,6 +16,8 @@ export default function Dashboard({ auth }) {
     const { flash } = usePage().props;
     const [formError, setFormError] = useState(null);
 
+
+
     useEffect(() => {
         if (flash && flash.error) {
             Swal.fire({
@@ -59,8 +61,8 @@ export default function Dashboard({ auth }) {
         } catch (error) {
             console.error("Error al enviar el formulario:", error);
         };
-
     };
+
     const handleCheckboxChange = (event) => {
         setData("acceptedTerms", event.target.checked);
         setFormError(null);
@@ -72,18 +74,10 @@ export default function Dashboard({ auth }) {
         >
             <Head title="Consulta por documento" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white p-4 overflow-hidden shadow-sm sm:rounded-lg">
+            <div className="py-10">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8  flex gap-x-4">
+                    <div className="bg-white p-4 overflow-hidden w-1/2 shadow-sm sm:rounded-lg">
                         <form method="POST" onSubmit={handleSubmit} className="max-w-sm ">
-                            {/*   <div className="mb-5">
-                                <label htmlFor="documento" className="block mb-2 text-lg font-medium text-gray-900">Consulta por documento</label>
-
-                                <input type="text" id="documento" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Documento a consultar" onChange={(e) =>
-                                    setData("documento", e.target.value)
-                                } />
-
-                            </div> */}
                             {data.tipodoc === 'nombre' && (
                                 <div className="mb-5">
                                     <label htmlFor="documento" className="block mb-2 text-lg font-medium text-gray-900">Nombre</label>
@@ -152,8 +146,11 @@ export default function Dashboard({ auth }) {
 
                             </div>
 
-                            <button type="submit" className="text-white bg-[#9c60b4] hover:bg-[#C39BD3] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Ver reporte</button>
+                            <button type="submit" className="text-white bg-[#9c60b4] hover:bg-[#C39BD3] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Generar reporte</button>
                         </form>
+                    </div>
+                    <div id="report" className='bg-white p-4 w-1/2 overflow-hidden shadow-sm sm:rounded-lg hidden'>
+                        <p>Reporte solicitado</p>
                     </div>
                 </div>
             </div>

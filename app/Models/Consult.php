@@ -16,5 +16,10 @@ class Consult extends Model
         'typedoc',
         'typeofentry',
         'fechaE',
+         'report',
+
+    ];
+    protected $casts = [
+        'report' => 'array',
     ];
 }

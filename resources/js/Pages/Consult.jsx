@@ -1,8 +1,5 @@
-import { CheckboxWithLink } from '@/Components/CheckboxWithLink';
-import { MultiLevelSidebar } from '@/Components/MultiLevelSidebar';
-import Sidebar from '@/Components/Sidebar';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm, Link, usePage } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import 'flowbite';
 
 export default function Consult({ auth, historicos }) {
@@ -26,8 +23,9 @@ export default function Consult({ auth, historicos }) {
                                             <th className="px-4 py-2 border-b">Cédula</th>
                                             <th className="px-4 py-2 border-b">Fecha de reporte</th>
                                             <th className="px-4 py-2 border-b">Tipo Documento</th>
-                                            <th className="px-4 py-2 border-b">	Fecha de expedición</th>
+                                            <th className="px-4 py-2 border-b">Fecha de expedición</th>
                                             <th className="px-4 py-2 border-b">Tipo de Entrada</th>
+                                            <th className="px-4 py-2 border-b">Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -39,6 +37,14 @@ export default function Consult({ auth, historicos }) {
                                                 <td className="px-4 py-3 border-b">{historico.typedoc}</td>
                                                 <td className="px-4 py-2 border-b">{historico.fechaE ? historico.fechaE : 'No identificada'}</td>
                                                 <td className="px-4 py-3 border-b">{historico.typeofentry}</td>
+                                                <td className="px-4 py-3 border-b">
+                                                    <Link
+                                                        href={route('report.show', { doc: historico.doc })}
+                                                        className="text-blue-500 hover:underline"
+                                                    >
+                                                        Ver Reporte
+                                                    </Link>
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>

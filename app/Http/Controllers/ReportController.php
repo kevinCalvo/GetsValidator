@@ -28,5 +28,11 @@ class ReportController extends Controller
 
         return Inertia::render('PageScanner');
     }
+    public function showReport($doc)
+    {
+        $consult = Consult::where('doc', $doc)->firstOrFail();
+        $json = $consult->report;
+        return Inertia::render('Reporte', ['data' => $json]);
+    }
 
 }

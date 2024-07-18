@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('typedoc');
             $table->string('fechaE')->nullable();
             $table->string('typeofentry');
+            $table->json('report')->nullable();
+
 
             $table->timestamps();
         });

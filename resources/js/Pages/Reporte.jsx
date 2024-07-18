@@ -1,5 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const groupByCategory = (data, categoryField) => {
     return data.reduce((acc, item) => {
@@ -12,9 +14,41 @@ const groupByCategory = (data, categoryField) => {
     }, {});
 };
 
+
 const Reporte = ({ auth, data }) => {
     console.log('Data completa:', data);
+    /*
+        const generatePDF = () => {
+            const input = document.getElementById('pdf-content');
 
+            // Asegurar que el fondo sea blanco
+            input.style.backgroundColor = '#ffffff';
+
+            html2canvas(input, { scale: 1 }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF();
+
+                const imgWidth = pdf.internal.pageSize.getWidth();
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                let position = 0;
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+
+                position = imgHeight;
+
+                // Check if more pages are needed
+                const remainingHeight = canvas.height - imgHeight;
+                const pages = Math.ceil(remainingHeight / pdf.internal.pageSize.getHeight());
+
+                for (let i = 1; i < pages; i++) {
+                    pdf.addPage();
+                    position -= pdf.internal.pageSize.getHeight();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                }
+
+                pdf.save("reporte.pdf");
+            });
+        }; */
     const { rut, runt_app, nombre, registraduria_certificado, peps, peps_consolidado, peps_denon, ofac, ofac_nombre, lista_onu, europol, interpol, procuraduria, contraloria, contaduria, defunciones_registraduria, insolvencias, policia, delitos_sexuales, rut_estado, proveedores_ficticios, juzgados_tyba, contadores_s } = data;
     const licencias = runt_app?.licencia?.licencias || [];
     const totalLicencias = runt_app?.licencia?.totalLicencias || 0;
@@ -28,11 +62,11 @@ const Reporte = ({ auth, data }) => {
             <Head title="Reporte" />
 
             <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div id="pdf-content" className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <h1 className="text-2xl font-bold mb-5">Reporte</h1>
                         <p className="text-xl font-semibold mb-5">{nombre}</p>
-
+                        {/*  <button onClick={generatePDF} className="mt-4 bg-blue-500 text-white p-2 rounded">Generar PDF</button> */}
                         <div className="grid grid-cols-1  md:grid-cols-4  lg:grid-cols-7 gap-4 mb-5">
                             <div className="flex gap-2 flex-col">
                                 <p className="font-semibold">Cédula:</p>
@@ -191,11 +225,10 @@ const Reporte = ({ auth, data }) => {
                             </div>
                         </div>
                     )}
-                    {europol && (
+                    {europol ? (
                         <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
-                            <p className="text-xl font-semibold mb-5"> European Union Most Wanted List (EUROPOL)
-                            </p>
-                            <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
+                            <p className="text-xl font-semibold mb-5">European Union Most Wanted List (EUROPOL)</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
                                 {europol.length === 0 ? (
                                     <p className='text-gray-500'>No registra en la fuente</p>
                                 ) : (
@@ -203,13 +236,14 @@ const Reporte = ({ auth, data }) => {
                                         {europol.map((item, index) => (
                                             <div key={index} className="flex gap-2 flex-col">
                                                 <p>{item}</p>
-
                                             </div>
                                         ))}
                                     </div>
                                 )}
                             </div>
                         </div>
+                    ) : (
+                        <p className="text-gray-500 mt-4">No encontrado</p>
                     )}
                     {interpol && (
                         <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
@@ -401,6 +435,7 @@ const Reporte = ({ auth, data }) => {
                     </div>
 
                 </div>
+
 
             </div>
         </AuthenticatedLayout >

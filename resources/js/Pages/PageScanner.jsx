@@ -81,7 +81,7 @@ export default function PageScanner({ auth }) {
                             <div className="mb-5">
                                 <label htmlFor="documento" className="block mb-2 text-lg font-medium text-gray-900">Escanear cédula</label>
 
-                                <input type="text" id="documento" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Escanear cédula" onChange={(e) =>
+                                <input type="text" id="documento" autoFocus className="bg-gray-50  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Escanear cédula" onChange={(e) =>
                                     setData("documento", e.target.value)
                                 } />
                             </div>

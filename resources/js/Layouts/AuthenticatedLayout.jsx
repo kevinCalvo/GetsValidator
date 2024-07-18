@@ -21,7 +21,7 @@ export default function Authenticated({ user, header, children }) {
                             <div className="shrink-0 gap-x-10 flex items-center">
 
                                 <Link href="/">
-                                    <img src="img/r-Gets.png" className="block h-9 w-auto fill-current text-gray-800" />
+                                    <img src="/img/r-Gets.png" className="block h-9 w-auto fill-current text-gray-800" />
                                 </Link>
                                 <div className='flex gap-x-2 justify-center items-center'>
                                     {!showSidebar && (
