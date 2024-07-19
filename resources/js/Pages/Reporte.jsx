@@ -16,46 +16,72 @@ const groupByCategory = (data, categoryField) => {
 
 
 const Reporte = ({ auth, data }) => {
-    /*  console.log('Data completa:', data); */
-    /*
-        const generatePDF = () => {
-            const input = document.getElementById('pdf-content');
+    /*   console.log('Data completa:', data); */
 
-            // Asegurar que el fondo sea blanco
-            input.style.backgroundColor = '#ffffff';
-
-            html2canvas(input, { scale: 1 }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF();
-
-                const imgWidth = pdf.internal.pageSize.getWidth();
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-                let position = 0;
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-
-                position = imgHeight;
-
-                // Check if more pages are needed
-                const remainingHeight = canvas.height - imgHeight;
-                const pages = Math.ceil(remainingHeight / pdf.internal.pageSize.getHeight());
-
-                for (let i = 1; i < pages; i++) {
-                    pdf.addPage();
-                    position -= pdf.internal.pageSize.getHeight();
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                }
-
-                pdf.save("reporte.pdf");
-            });
-        }; */
-    const { rut, runt_app, nombre, registraduria_certificado, peps, peps_consolidado, peps_denon, ofac, ofac_nombre, lista_onu, europol, interpol, procuraduria, contraloria, contaduria, defunciones_registraduria, insolvencias, policia, delitos_sexuales, rut_estado, proveedores_ficticios, juzgados_tyba, contadores_s } = data;
+    const { rut, runt_app, nombre, registraduria_certificado, peps, peps_consolidado, peps_denon, ofac, ofac_nombre, lista_onu, europol, interpol, procuraduria, contraloria, contaduria, defunciones_registraduria, insolvencias, policia, delitos_sexuales, rut_estado, proveedores_ficticios, juzgados_tyba, contadores_s, simit, rama } = data;
     const licencias = runt_app?.licencia?.licencias || [];
     const totalLicencias = runt_app?.licencia?.totalLicencias || 0;
 
     const groupedPeps = groupByCategory(peps || [], 'CATEGORIA');
     const groupedPepsConsolidado = groupByCategory(peps_consolidado || [], 'categoria');
     const groupedPepsDenon = groupByCategory(peps_denon || [], 'CATEGORIA');
+
+    const renderCityData = (details) => {
+        if (typeof details === 'boolean') {
+            return (
+                <div className="p-4 border border-gray-200 rounded-lg shadow-sm mb-4">
+                    <p>{details ? 'Información disponible' : 'No se encontró información'}</p>
+                </div>
+            );
+        }
+        const renderActuaciones = (actuaciones) => {
+            return (
+                <div className="mb-4">
+                    <h4 className="text-md font-semibold mb-2">Actuaciones:</h4>
+                    <ul className="list-disc pl-5">
+                        {actuaciones.map((act, idx) => (
+                            <li key={idx} className="mb-2">
+                                <p><strong>Tipo:</strong> {act.tipo}</p>
+                                <p><strong>Fecha:</strong> {act.fecha}</p>
+                                <p><strong>Folio:</strong> {act.folio}</p>
+                                <p><strong>Cuadernos:</strong> {act.cuadernos}</p>
+                                <p><strong>Anotación:</strong> {act.anotacion}</p>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        };
+
+        if (typeof details === 'object') {
+            return (
+                <div className="p-4 border border-gray-200 rounded-lg shadow-sm mb-4">
+                    {Object.entries(details).map(([codigo, info]) => (
+                        <div key={codigo} className="mb-4 border-t pt-4">
+                            <p><strong>Código:</strong> {codigo}</p>
+                            <p><strong>Delitos:</strong> {info.delitos}</p>
+                            <p><strong>Observaciones:</strong> {info.observaciones}</p>
+                            <p>
+                                <strong>Actuaciones:</strong>
+                                <p>
+                                    {info.actuaciones && renderActuaciones(info.actuaciones)}
+                                </p>
+
+
+                            </p>
+                            <p>
+                                <strong>Imagen:</strong>
+                                <img src={info.pantallap} alt={`Imagen de ${codigo}`} className="w-full max-w-xs mt-2" />
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        return null;
+    };
+
 
     return (
         <AuthenticatedLayout user={auth.user} header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Reporte</h2>}>
@@ -398,17 +424,126 @@ const Reporte = ({ auth, data }) => {
                     </div>
 
                     <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
-                        <p className="text-xl font-semibold mb-5">Juzgados Tyba - Justicia XXI
-                        </p>
-                        <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-1 gap-4 mb-5">
+                        <p className="text-xl font-semibold mb-5">Juzgados Tyba - Justicia XXI</p>
+                        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mb-5">
                             {juzgados_tyba.length === 0 ? (
                                 <p className='text-gray-500'>No registra en la fuente</p>
                             ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-5">
+                                <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
                                     {juzgados_tyba.map((item, index) => (
-                                        <div key={index} className="flex gap-2 flex-col">
-                                            <p>{item}</p>
+                                        <div key={index} className="flex flex-col gap-4 p-4 border border-gray-200 rounded-lg shadow-sm">
+                                            {/* Información básica del proceso */}
+                                            <div className="space-y-2">
+                                                <p><strong>Clase Proceso:</strong> {item["CLASE PROCESO"]}</p>
+                                                <p><strong>Código Proceso:</strong> {item["CODIGO PROCESO"]}</p>
+                                                <p><strong>Despacho:</strong> {item["DESPACHO"]}</p>
+                                                <p><strong>Proceso Privado:</strong> {item["proceso_privado"] ? "Sí" : "No"}</p>
+                                            </div>
 
+                                            {/* Información adicional si existe */}
+                                            {item["INFO PROCES0"] && (
+                                                <div className="mt-4 border-t pt-4">
+                                                    <p className="font-semibold text-lg">Información Adicional:</p>
+
+                                                    {/* Información general */}
+                                                    {Object.entries(item["INFO PROCES0"]).map(([key, value], idx) => (
+                                                        key !== 'actuaciones' && key !== 'sujetos' ? (
+                                                            <p key={idx} className="flex items-center"><strong className="w-48 text-gray-700">{key}:</strong> {value || "No disponible"}</p>
+                                                        ) : null
+                                                    ))}
+
+                                                    {/* Actuaciones */}
+                                                    {item["INFO PROCES0"]["actuaciones"] && item["INFO PROCES0"]["actuaciones"].length > 0 && (
+                                                        <div className="mt-4">
+                                                            <p className="font-semibold text-lg">Actuaciones:</p>
+                                                            {item["INFO PROCES0"]["actuaciones"].map((actuacion, actIndex) => (
+                                                                <div key={actIndex} className="border-t pt-2">
+                                                                    {Object.entries(actuacion).map(([key, value], idx) => (
+                                                                        <p key={idx} className="flex items-center"><strong className="w-48 text-gray-700">{key}:</strong> {value || "No disponible"}</p>
+                                                                    ))}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Sujetos */}
+                                                    {item["INFO PROCES0"]["sujetos"] && item["INFO PROCES0"]["sujetos"].length > 0 && (
+                                                        <div className="mt-4">
+                                                            <p className="font-semibold text-lg">Sujetos:</p>
+                                                            {item["INFO PROCES0"]["sujetos"].map((sujeto, subjIndex) => (
+                                                                <div key={subjIndex} className="border-t pt-2">
+                                                                    {Object.entries(sujeto).map(([key, value], idx) => (
+                                                                        <p key={idx} className="flex items-center"><strong className="w-48 text-gray-700">{key}:</strong> {value || "No disponible"}</p>
+                                                                    ))}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <p className="text-xl font-semibold mb-5">Información SIMIT</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mb-5">
+                            {/* Información General */}
+                            <div className="p-4 border border-gray-200 rounded-lg shadow-sm">
+                                <h3 className="text-lg font-semibold mb-4">Resumen General</h3>
+                                <p><strong>Número de Documento:</strong> {simit.numero_documento}</p>
+                                <p><strong>Total General:</strong> {simit.total_general.toLocaleString()}</p>
+                                <p><strong>Total Multas:</strong> {simit.total_multas.toLocaleString()}</p>
+                                <p><strong>Total Multas a Pagar:</strong> {simit.total_multas_pagar.toLocaleString()}</p>
+                                <p><strong>Total a Pagar:</strong> {simit.total_pagar.toLocaleString()}</p>
+                                <p><strong>Acuerdos por Pagar:</strong> {simit.total_acuardos_por_pagar.toLocaleString()}</p>
+                                <p><strong>Paz y Salvo:</strong> {simit.paz_salvo ? "Sí" : "No"}</p>
+                            </div>
+
+                            {/* Cursos */}
+                            {simit.cursos.length > 0 && (
+                                <div className="p-4 border border-gray-200 rounded-lg shadow-sm">
+                                    <h3 className="text-lg font-semibold mb-4">Cursos</h3>
+                                    {simit.cursos.map((curso, index) => (
+                                        <div key={index} className="mb-4 border-t pt-4">
+                                            <p><strong>Centro de Instrucción:</strong> {curso.centro_intruccion}</p>
+                                            <p><strong>Certificado:</strong> {curso.certificado}</p>
+                                            <p><strong>Ciudad:</strong> {curso.cuidad}</p>
+                                            <p><strong>Estado:</strong> {curso.estado}</p>
+                                            <p><strong>Fecha Comparendo:</strong> {curso.fecha_comparendo || "No disponible"}</p>
+                                            <p><strong>Fecha del Curso:</strong> {curso.fecha_curso}</p>
+                                            <p><strong>Fecha de Reporte:</strong> {curso.fecha_reporte}</p>
+                                            <p><strong>Número de Multa:</strong> {curso.numero_multa}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Multas */}
+                            {simit.multas.length > 0 && (
+                                <div className="p-4 border border-gray-200 rounded-lg shadow-sm">
+                                    <h3 className="text-lg font-semibold mb-4">Multas</h3>
+                                    {simit.multas.map((multa, index) => (
+                                        <div key={index} className="mb-4 border-t pt-4">
+                                            <p><strong>Comparendo:</strong> {multa.comparendo ? "Sí" : "No"}</p>
+                                            <p><strong>Comparendo Electrónico:</strong> {multa.comparendo_electronico ? "Sí" : "No"}</p>
+                                            <p><strong>Consecutivo Comparendo:</strong> {multa.consecutivo_comparendo || "No disponible"}</p>
+                                            <p><strong>Departamento:</strong> {multa.departamento}</p>
+                                            <p><strong>Estado:</strong> {multa.estado || "No disponible"}</p>
+                                            <p><strong>Fecha Comparendo:</strong> {multa.fecha_comparendo}</p>
+                                            <p><strong>Fecha Notificación:</strong> {multa.fecha_notificacion || "No disponible"}</p>
+                                            <p><strong>Número Comparendo:</strong> {multa.numero_comparendo}</p>
+                                            <p><strong>Organismo de Tránsito:</strong> {multa.organismo_transito}</p>
+                                            <p><strong>Placa:</strong> {multa.placa}</p>
+                                            <p><strong>Total a Pagar:</strong> {multa.total_pagar.toLocaleString()}</p>
+                                            <p><strong>Valor Descuento:</strong> {multa.valor_descuento.toLocaleString()}</p>
+                                            <p><strong>Valor Descuento Interés:</strong> {multa.valor_descuento_interes.toLocaleString()}</p>
+                                            <p><strong>Valor Descuento Pronto Pago:</strong> {multa.valor_descuento_pronto_pago.toLocaleString()}</p>
+                                            <p><strong>Valor Interés:</strong> {multa.valor_interes.toLocaleString()}</p>
+                                            <p><strong>Valor Multa:</strong> {multa.valor_multa.toLocaleString()}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -434,6 +569,17 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     </div>
 
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <p className="text-xl font-semibold mb-5">Información de Ramas</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mb-5">
+                            {Object.entries(rama).map(([cityKey, details], index) => (
+                                <div key={index} className="p-4 border border-gray-200 rounded-lg shadow-sm mb-4">
+                                    <h3 className="text-lg font-semibold mb-4">{cityKey.replace(/jepms$/, '')}</h3>
+                                    {renderCityData(details)}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
 

@@ -77,6 +77,7 @@ class TusdatosController extends Controller
                     'report' => $json,
                 ]);
             }
+           /*  dd($json); */
 
             return redirect()->route('report.index')->with(['data' => $json]);
         } catch (\Exception $exception) {
@@ -127,7 +128,7 @@ class TusdatosController extends Controller
 
         $maxAttempts = 14;
         $attempt = 0;
-        $delay = 20;
+        $delay = 15;
 
         while ($attempt < $maxAttempts) {
             $statusResponse = $this->getJobStatus($jobId);
