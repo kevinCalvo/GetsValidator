@@ -16,7 +16,7 @@ const groupByCategory = (data, categoryField) => {
 
 
 const Reporte = ({ auth, data }) => {
-    console.log('Data completa:', data);
+    /*  console.log('Data completa:', data); */
     /*
         const generatePDF = () => {
             const input = document.getElementById('pdf-content');

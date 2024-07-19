@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -35,20 +34,38 @@ class TusdatosController extends Controller
         ]);
 
         try {
-
             $consult = Consult::where('doc', $request->documento)->first();
 
             if ($consult) {
-
                 $json = $consult->report;
             } else {
+                $identifier = $this->launchRequest($request->documento, $request->tipodoc, $request->date);
+                if ($this->isFinalizedId($identifier)) {
+                    $json = $this->fetchFinalReport($identifier);
+                } else {
+                    $json = $this->fetchReportAsync($identifier);
 
-                $jobId = $this->launchRequest($request->documento, $request->tipodoc, $request->date);
-                $json = $this->fetchReportAsync($jobId);
+
+                    if ($json) {
+
+                        $nombre = $json['nombre'] ?? null;
+                        $fechaR = $json['defunciones_registraduria']['date'] ?? null;
+
+                        $consult = Consult::create([
+                            'doc' => $request->documento,
+                            'typedoc' => $request->tipodoc,
+                            'fechaE' => $request->date,
+                            'typeofentry' => $request->value,
+                            'name' => $nombre,
+                            'fechaR' => $fechaR,
+                            'report' => $json,
+                        ]);
+                        return redirect()->route('report.index')->with(['data' => $json]);
+                    }
+                }
 
                 $nombre = $json['nombre'] ?? null;
                 $fechaR = $json['defunciones_registraduria']['date'] ?? null;
-
 
                 $consult = Consult::create([
                     'doc' => $request->documento,
@@ -61,12 +78,12 @@ class TusdatosController extends Controller
                 ]);
             }
 
-
             return redirect()->route('report.index')->with(['data' => $json]);
         } catch (\Exception $exception) {
             return redirect()->back()->with('errorMessage', $exception->getMessage());
         }
     }
+
     private function launchRequest($documento, $tipodoc, $fechaE)
     {
         $data = [
@@ -91,28 +108,68 @@ class TusdatosController extends Controller
         return $launchData['jobid'] ?? $launchData['id'];
     }
 
+    private function fetchFinalReport($id)
+    {
+        $response = Http::withBasicAuth($this->correo, $this->pass)
+            ->timeout(120)
+            ->get("{$this->endpoint}/report_json/{$id}");
+
+        if ($response->successful()) {
+            return $response->json();
+        } else {
+            throw new \Exception('Error al obtener el reporte');
+        }
+    }
+
     private function fetchReportAsync($jobId)
     {
-        $maxAttempts = 10;
+        set_time_limit(120);
+
+        $maxAttempts = 14;
         $attempt = 0;
         $delay = 20;
 
-        set_time_limit(120);
-
         while ($attempt < $maxAttempts) {
-            $response = Http::withBasicAuth($this->correo, $this->pass)
-                ->timeout(120)
-                ->get("{$this->endpoint}/report_json/{$jobId}");
+            $statusResponse = $this->getJobStatus($jobId);
 
-            if ($response->successful()) {
-                return $response->json();
+            if (isset($statusResponse['estado'])) {
+                if ($statusResponse['estado'] === 'finalizado') {
+
+                    return $this->fetchFinalReport($statusResponse['id']);
+                } elseif ($statusResponse['estado'] === 'procesando') {
+                    Log::info("Intento {$attempt}: El reporte aún está en proceso.");
+                } elseif (isset($statusResponse['error'])) {
+                    throw new \Exception('Error en el job: ' . $statusResponse['error']);
+                }
+            } else {
+                throw new \Exception('Estado desconocido del job');
             }
 
-            Log::info("Intento {$attempt} fallido al obtener el reporte. Código de estado: {$response->status()}");
-            $attempt++;
+
             sleep($delay);
+            $attempt++;
         }
 
-        throw new \Exception('Error al obtener el reporte después de múltiples intentos');
+        throw new \Exception('El reporte no se completó después de múltiples intentos.');
+    }
+
+    private function getJobStatus($jobId)
+    {
+        $response = Http::withBasicAuth($this->correo, $this->pass)
+            ->timeout(120)
+            ->get("{$this->endpoint}/results/{$jobId}");
+
+        if ($response->failed()) {
+            throw new \Exception('Error al consultar el estado del job');
+        }
+
+        $statusData = $response->json();
+        Log::info('Estado del job consultado:', $statusData);
+        return $statusData ;
+    }
+
+    private function isFinalizedId($identifier)
+    {
+        return strlen($identifier) !== 36;
     }
 }
