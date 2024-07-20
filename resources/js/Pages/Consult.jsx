@@ -31,7 +31,7 @@ export default function Consult({ auth, historicos }) {
                                     <tbody>
                                         {historicos.map((historico) => (
                                             <tr className='text-center' key={historico.id}>
-                                                <td className="px-4 py-3 border-b">{historico.name}</td>
+                                                <td className="px-4 py-3 border-b">{historico.name ? historico.name : 'No identificado'}</td>
                                                 <td className="px-4 py-3 border-b">{historico.doc}</td>
                                                 <td className="px-4 py-3 border-b">{historico.fechaR}</td>
                                                 <td className="px-4 py-3 border-b">{historico.typedoc}</td>

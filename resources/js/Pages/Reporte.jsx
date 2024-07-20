@@ -114,7 +114,7 @@ const Reporte = ({ auth, data }) => {
                             </div>
                             <div className="flex gap-2 flex-col">
                                 <p className='font-semibold'>Género:</p>
-                                <p>{data.genero}</p>
+                                <p>{data.genero ? data.genero : 'N/A'}</p>
                             </div>
 
                             <div className='flex gap-2 flex-col'>
@@ -251,20 +251,18 @@ const Reporte = ({ auth, data }) => {
                             </div>
                         </div>
                     )}
-                    {europol ? (
+                    {Array.isArray(europol) ? (
                         <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5">European Union Most Wanted List (EUROPOL)</p>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
                                 {europol.length === 0 ? (
                                     <p className='text-gray-500'>No registra en la fuente</p>
                                 ) : (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
-                                        {europol.map((item, index) => (
-                                            <div key={index} className="flex gap-2 flex-col">
-                                                <p>{item}</p>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    europol.map((item, index) => (
+                                        <div key={index} className="flex gap-2 flex-col">
+                                            <p>{item}</p>
+                                        </div>
+                                    ))
                                 )}
                             </div>
                         </div>
@@ -283,25 +281,24 @@ const Reporte = ({ auth, data }) => {
                             </div>
                         </div>
                     )}
-                    {procuraduria && (
+
+                    {Array.isArray(procuraduria) ? (
                         <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
-                            <p className="text-xl font-semibold mb-5"> Procuraduría General de la Nación (Consulta en Línea)
-                            </p>
-                            <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
+                            <p className="text-xl font-semibold mb-5">Procuraduría General de la Nación (Consulta en Línea)</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
                                 {procuraduria.length === 0 ? (
                                     <p className='text-gray-500'>No registra en la fuente</p>
                                 ) : (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
-                                        {procuraduria.map((item, index) => (
-                                            <div key={index} className="flex gap-2 flex-col">
-                                                <p>{item}</p>
-
-                                            </div>
-                                        ))}
-                                    </div>
+                                    procuraduria.map((item, index) => (
+                                        <div key={index} className="flex gap-2 flex-col">
+                                            <p>{item}</p>
+                                        </div>
+                                    ))
                                 )}
                             </div>
                         </div>
+                    ) : (
+                        <p className="text-gray-500 mt-4">No encontrado</p>
                     )}
                     {contraloria && (
                         <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
