@@ -3,6 +3,7 @@ import { Head, Link } from "@inertiajs/react";
 import 'flowbite';
 
 export default function Consult({ auth, historicos }) {
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -25,7 +26,7 @@ export default function Consult({ auth, historicos }) {
                                             <th className="px-4 py-2 border-b">Tipo Documento</th>
                                             <th className="px-4 py-2 border-b">Fecha de expedición</th>
                                             <th className="px-4 py-2 border-b">Tipo de Entrada</th>
-                                            <th className="px-4 py-2 border-b">Acciones</th>
+                                            <th className="px-4 py-2 border-b">Ver Reporte</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -42,9 +43,10 @@ export default function Consult({ auth, historicos }) {
                                                         href={route('report.show', { doc: historico.doc })}
                                                         className="text-blue-500 hover:underline"
                                                     >
-                                                        Ver Reporte
+                                                        <box-icon type='solid' color='gray' name='report'></box-icon>
                                                     </Link>
                                                 </td>
+
                                             </tr>
                                         ))}
                                     </tbody>

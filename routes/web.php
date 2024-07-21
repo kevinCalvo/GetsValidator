@@ -16,6 +16,7 @@ Route::post('/antecedentes', [TusdatosController::class, 'antecedentes'])->name(
 Route::get('/report', [ReportController::class, 'index'])->name('report.index');
 Route::get('/historico', [ReportController::class, 'consult'])->name('consult.index');
 Route::get('/report/{doc}', [ReportController::class, 'showReport'])->name('report.show');
+
 Route::get('/scanner', [ReportController::class, 'scanner'])->name('scanner.index');
 
 

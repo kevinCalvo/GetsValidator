@@ -29,7 +29,7 @@ const Reporte = ({ auth, data }) => {
     const renderCityData = (details) => {
         if (typeof details === 'boolean') {
             return (
-                <div className="p-4 border border-gray-200 rounded-lg shadow-sm mb-4">
+                <div className="p-4 border border-gray-200 rounded-lg  mb-4">
                     <p>{details ? 'Información disponible' : 'No se encontró información'}</p>
                 </div>
             );
@@ -55,7 +55,7 @@ const Reporte = ({ auth, data }) => {
 
         if (typeof details === 'object') {
             return (
-                <div className="p-4 border border-gray-200 rounded-lg shadow-sm mb-4">
+                <div className="p-4 border border-gray-200 rounded-lg mb-4">
                     {Object.entries(details).map(([codigo, info]) => (
                         <div key={codigo} className="mb-4 border-t pt-4">
                             <p><strong>Código:</strong> {codigo}</p>
@@ -82,17 +82,63 @@ const Reporte = ({ auth, data }) => {
         return null;
     };
 
+    const generatePDF = (data) => {
+        const input = document.getElementById('pdf-content');
 
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pageHeight = pdf.internal.pageSize.height;
+        const pageWidth = pdf.internal.pageSize.width;
+        const margin = 10;
+        const contentWidth = pageWidth - 2 * margin;
+        const contentHeight = pageHeight - 2 * margin;
+
+        html2canvas(input).then((canvas) => {
+            const imgData = canvas.toDataURL('image/png');
+            let imgHeight = (canvas.height * contentWidth) / canvas.width;
+
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', margin, margin, contentWidth, imgHeight);
+            heightLeft -= contentHeight;
+
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', margin, position, contentWidth, imgHeight);
+                heightLeft -= contentHeight;
+            }
+            const fileName = `${nombre}_reporte.pdf`.replace(/\s+/g, '-');
+            pdf.save(fileName);
+
+
+        });
+    };
+    const printDocument = () => {
+        window.print();
+    };
     return (
         <AuthenticatedLayout user={auth.user} header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Reporte</h2>}>
             <Head title="Reporte" />
 
             <div className="py-12">
-                <div id="pdf-content" className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <h1 className="text-2xl font-bold mb-5">Reporte</h1>
+                <div id="pdf-content" className=" max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div className="bg-white overflow-hidden sm:rounded-lg p-6">
+                        <div className='flex justify-between'>
+                            <h1 className="text-2xl font-bold mb-5">Reporte</h1>
+                            <div className='flex gap-x-2'>
+                                <button onClick={generatePDF} className="bg-[#C39BD3] h-9 text-sm p-2 rounded-lg">Descargar PDF</button>
+                                <button
+                                    onClick={printDocument}
+                                    className="bg-[#C39BD3] h-9 text-sm p-2 rounded-lg"
+                                >
+                                    Imprimir PDF
+                                </button>
+                            </div>
+
+                        </div>
                         <p className="text-xl font-semibold mb-5">{nombre}</p>
-                        {/*  <button onClick={generatePDF} className="mt-4 bg-blue-500 text-white p-2 rounded">Generar PDF</button> */}
+
                         <div className="grid grid-cols-1  md:grid-cols-4  lg:grid-cols-7 gap-4 mb-5">
                             <div className="flex gap-2 flex-col">
                                 <p className="font-semibold">Cédula:</p>
@@ -139,7 +185,7 @@ const Reporte = ({ auth, data }) => {
                     </div>
 
                     {registraduria_certificado && (
-                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5">Registraduría Nacional del Estado Civil</p>
                             <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
                                 <div className="flex gap-2 flex-col">
@@ -166,7 +212,7 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     )}
                     {groupedPeps && (
-                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5">Listas y Personas Expuestas Políticamente (PEPs)</p>
                             {Object.keys(groupedPeps).length === 0 ? (
                                 <p>No se encontraron registros.</p>
@@ -194,7 +240,7 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     )}
                     {groupedPepsConsolidado && (
-                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                             {/* <p className="text-xl font-semibold mb-5">PEPs Consolidado</p> */}
                             {Object.keys(groupedPepsConsolidado).length === 0 ? (
                                 <p>No se encontraron registros.</p>
@@ -217,7 +263,7 @@ const Reporte = ({ auth, data }) => {
                     )}
 
                     {ofac && (
-                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5">Lista Clinton (OFAC), Búsqueda por Documento</p>
                             <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
                                 <div className="flex gap-2 flex-col">
@@ -228,7 +274,7 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     )}
                     {ofac_nombre && (
-                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5">Lista Clinton (OFAC), Búsqueda por Nombre
                             </p>
                             <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
@@ -240,7 +286,7 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     )}
                     {lista_onu && (
-                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5"> Consejo de Seguridad de la Naciones Unidas (ONU)
                             </p>
                             <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
@@ -252,7 +298,7 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     )}
                     {Array.isArray(europol) ? (
-                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5">European Union Most Wanted List (EUROPOL)</p>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
                                 {europol.length === 0 ? (
@@ -270,7 +316,7 @@ const Reporte = ({ auth, data }) => {
                         <p className="text-gray-500 mt-4">No encontrado</p>
                     )}
                     {interpol && (
-                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5">Organización Internacional de Policía Criminal (INTERPOL)
                             </p>
                             <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
@@ -283,7 +329,7 @@ const Reporte = ({ auth, data }) => {
                     )}
 
                     {Array.isArray(procuraduria) ? (
-                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5">Procuraduría General de la Nación (Consulta en Línea)</p>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
                                 {procuraduria.length === 0 ? (
@@ -301,7 +347,7 @@ const Reporte = ({ auth, data }) => {
                         <p className="text-gray-500 mt-4">No encontrado</p>
                     )}
                     {contraloria && (
-                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5">Contraloría General de la República (Consulta en Línea)
                             </p>
                             <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
@@ -313,7 +359,7 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     )}
                     {contaduria && (
-                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5">Contaduría General de la Nación
                             </p>
                             {contaduria ? (
@@ -329,7 +375,7 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     )}
                     {defunciones_registraduria && (
-                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5">Defunciones Registraduria</p>
                             <div className="grid grid-cols-1  md:grid-cols-3  lg:grid-cols-3 gap-4 mb-5">
                                 <div className="flex gap-2 flex-col">
@@ -349,7 +395,7 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     )}
                     {insolvencias && (
-                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5"> Insolvencias Supersociedades
                             </p>
                             <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
@@ -369,7 +415,7 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     )}
 
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                    <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">Policía Nacional de Colombia
                         </p>
                         <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
@@ -380,7 +426,7 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     </div>
                     {delitos_sexuales && (
-                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                        <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5">Delitos sexuales contra menores de edad
                             </p>
                             <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-1 gap-4 mb-5">
@@ -399,7 +445,7 @@ const Reporte = ({ auth, data }) => {
                             </div>
                         </div>
                     )}
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                    <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">Registro Único Tributario (RUT)
                         </p>
                         <div className="grid grid-cols-1  md:grid-cols-1  lg:grid-cols-1 gap-4 mb-5">
@@ -409,7 +455,7 @@ const Reporte = ({ auth, data }) => {
 
                         </div>
                     </div>
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                    <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">DIAN (Proveedores ficticios)
                         </p>
                         <div className="grid grid-cols-1  md:grid-cols-1  lg:grid-cols-1 gap-4 mb-5">
@@ -420,7 +466,7 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     </div>
 
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                    <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">Juzgados Tyba - Justicia XXI</p>
                         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mb-5">
                             {juzgados_tyba.length === 0 ? (
@@ -428,7 +474,7 @@ const Reporte = ({ auth, data }) => {
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
                                     {juzgados_tyba.map((item, index) => (
-                                        <div key={index} className="flex flex-col gap-4 p-4 border border-gray-200 rounded-lg shadow-sm">
+                                        <div key={index} className="flex flex-col gap-4 p-4 border border-gray-200 rounded-lg">
                                             {/* Información básica del proceso */}
                                             <div className="space-y-2">
                                                 <p><strong>Clase Proceso:</strong> {item["CLASE PROCESO"]}</p>
@@ -485,11 +531,11 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     </div>
 
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                    <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">Información SIMIT</p>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mb-5">
                             {/* Información General */}
-                            <div className="p-4 border border-gray-200 rounded-lg shadow-sm">
+                            <div className="p-4 border border-gray-200 rounded-lg ">
                                 <h3 className="text-lg font-semibold mb-4">Resumen General</h3>
                                 <p><strong>Número de Documento:</strong> {simit.numero_documento}</p>
                                 <p><strong>Total General:</strong> {simit.total_general.toLocaleString()}</p>
@@ -502,7 +548,7 @@ const Reporte = ({ auth, data }) => {
 
                             {/* Cursos */}
                             {simit.cursos.length > 0 && (
-                                <div className="p-4 border border-gray-200 rounded-lg shadow-sm">
+                                <div className="p-4 border border-gray-200 rounded-lg ">
                                     <h3 className="text-lg font-semibold mb-4">Cursos</h3>
                                     {simit.cursos.map((curso, index) => (
                                         <div key={index} className="mb-4 border-t pt-4">
@@ -521,7 +567,7 @@ const Reporte = ({ auth, data }) => {
 
                             {/* Multas */}
                             {simit.multas.length > 0 && (
-                                <div className="p-4 border border-gray-200 rounded-lg shadow-sm">
+                                <div className="p-4 border border-gray-200 rounded-lg ">
                                     <h3 className="text-lg font-semibold mb-4">Multas</h3>
                                     {simit.multas.map((multa, index) => (
                                         <div key={index} className="mb-4 border-t pt-4">
@@ -547,7 +593,7 @@ const Reporte = ({ auth, data }) => {
                             )}
                         </div>
                     </div>
-                    <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                    <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">Contadores sancionados
                         </p>
                         <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-1 gap-4 mb-5">
@@ -566,11 +612,11 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     </div>
 
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div className="bg-white overflow-hidden sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">Información de Ramas</p>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mb-5">
                             {Object.entries(rama).map(([cityKey, details], index) => (
-                                <div key={index} className="p-4 border border-gray-200 rounded-lg shadow-sm mb-4">
+                                <div key={index} className="p-4 border border-gray-200 rounded-lg mb-4">
                                     <h3 className="text-lg font-semibold mb-4">{cityKey.replace(/jepms$/, '')}</h3>
                                     {renderCityData(details)}
                                 </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Consult;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
 {
