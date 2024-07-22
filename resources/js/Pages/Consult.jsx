@@ -39,12 +39,13 @@ export default function Consult({ auth, historicos }) {
                                                 <td className="px-4 py-2 border-b">{historico.fechaE ? historico.fechaE : 'No identificada'}</td>
                                                 <td className="px-4 py-3 border-b">{historico.typeofentry}</td>
                                                 <td className="px-4 py-3 border-b">
-                                                    <Link
+                                                    <a
                                                         href={route('report.show', { doc: historico.doc })}
+                                                        target="_blank"
                                                         className="text-blue-500 hover:underline"
                                                     >
                                                         <box-icon type='solid' color='gray' name='report'></box-icon>
-                                                    </Link>
+                                                    </a>
                                                 </td>
 
                                             </tr>

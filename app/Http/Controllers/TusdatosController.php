@@ -23,7 +23,7 @@ class TusdatosController extends Controller
     public function antecedentes(Request $request)
     {
         $request->validate([
-            'documento' => 'required|digits_between:6,10',
+           /*  'documento' => 'required|digits_between:6,10', */
             'tipodoc' => 'required',
             'value' => 'required'
         ], [
@@ -34,10 +34,15 @@ class TusdatosController extends Controller
         ]);
 
         try {
+            if ($request->tipodoc === 'CC') {
+                $verification = $this->launchRequestVerify($request->documento, $request->date, $request->nombre);
+
+            }
+
             $consult = Consult::where('doc', $request->documento)->first();
 
             if ($consult) {
-                $json = $consult->report;
+                return redirect()->route('report.show', ['doc' => $consult->doc]);
             } else {
                 $identifier = $this->launchRequest($request->documento, $request->tipodoc, $request->date);
                 if ($this->isFinalizedId($identifier)) {
@@ -45,9 +50,7 @@ class TusdatosController extends Controller
                 } else {
                     $json = $this->fetchReportAsync($identifier);
 
-
                     if ($json) {
-
                         $nombre = $json['nombre'] ?? null;
                         $fechaR = $json['defunciones_registraduria']['date'] ?? null;
 
@@ -60,6 +63,7 @@ class TusdatosController extends Controller
                             'fechaR' => $fechaR,
                             'report' => $json,
                         ]);
+
                         return redirect()->route('report.index')->with(['data' => $json]);
                     }
                 }
@@ -77,11 +81,13 @@ class TusdatosController extends Controller
                     'report' => $json,
                 ]);
             }
-            /* dd($json); */
 
             return redirect()->route('report.index')->with(['data' => $json]);
         } catch (\Exception $exception) {
-            return redirect()->back()->with('errorMessage', $exception->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => $exception->getMessage()
+            ], 500);
         }
     }
 
@@ -91,7 +97,9 @@ class TusdatosController extends Controller
             'doc' => $documento,
             'typedoc' => $tipodoc,
             'fechaE' => $fechaE,
+
         ];
+        /* dd($data); */
 
         $launch = Http::withBasicAuth($this->correo, $this->pass)
             ->post("{$this->endpoint}/launch/", $data);
@@ -107,6 +115,44 @@ class TusdatosController extends Controller
         }
 
         return $launchData['jobid'] ?? $launchData['id'];
+    }
+    private function launchRequestVerify($documento, $nombre = null, $fechaE = null)
+    {
+        $data = [
+            'cedula' => $documento,
+            'fechaE' => $fechaE,
+            'nombre' => $nombre,
+        ];
+
+
+        $launchVerify = Http::withBasicAuth($this->correo, $this->pass)
+            ->post("{$this->endpoint}/launch/verify", $data);
+
+        if ($launchVerify->failed()) {
+            throw new \Exception('Error al lanzar la solicitud de verificación');
+        }
+
+        $launchVerifyData = $launchVerify->json();
+
+
+
+        if (isset($launchVerifyData['findings'])) {
+            foreach ($launchVerifyData['findings'] as $finding) {
+
+                if ($finding === 'Nombre no coincide') {
+
+                } elseif ($finding === 'Nombre coincide parcialmente') {
+
+                } elseif ($finding === 'Fecha de expedición no coincide') {
+
+                } elseif ($finding === 'No se encuentra la cédula consultada') {
+                    Log::info("no se encontro cedula");
+                }
+            }
+        }
+
+
+        return $launchVerifyData;
     }
 
     private function fetchFinalReport($id)

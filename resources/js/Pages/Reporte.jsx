@@ -118,26 +118,50 @@ const Reporte = ({ auth, data }) => {
         window.print();
     };
     return (
-        <AuthenticatedLayout user={auth.user} header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Reporte</h2>}>
+        <div className='bg-gray-200'>
             <Head title="Reporte" />
 
-            <div className="py-12">
+
+
+            <div className="py-4">
+                <div className=' max-w-7xl mx-auto sm:px-6 lg:px-8 flex justify-between  my-3'>
+                    <a className='bg-[#C39BD3] h-9 text-sm block p-2 rounded-lg' href={route('dashboard')}>
+                        Volver
+                    </a>
+                    <div className='flex gap-x-2'>
+
+                        <button onClick={generatePDF} className="bg-[#C39BD3] h-9 text-sm p-2 rounded-lg">Descargar PDF</button>
+                        <button
+                            onClick={printDocument}
+                            className="bg-[#C39BD3] h-9 text-sm p-2 rounded-lg"
+                        >
+                            Imprimir PDF
+                        </button>
+                    </div>
+
+
+
+
+                </div>
                 <div id="pdf-content" className=" max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden sm:rounded-lg p-6">
-                        <div className='flex justify-between'>
-                            <h1 className="text-2xl font-bold mb-5">Reporte</h1>
-                            <div className='flex gap-x-2'>
-                                <button onClick={generatePDF} className="bg-[#C39BD3] h-9 text-sm p-2 rounded-lg">Descargar PDF</button>
-                                <button
-                                    onClick={printDocument}
-                                    className="bg-[#C39BD3] h-9 text-sm p-2 rounded-lg"
-                                >
-                                    Imprimir PDF
-                                </button>
+                    <header>
+                        <div class="bg-[#C39BD3] border-gray-200 h-16 px-4 sm:rounded-lg lg:px-6 py-2.5">
+                            <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+                                <a href="/">
+                                    <img src="/img/r-Gets.png" className="block h-9 w-auto fill-current " />
+                                </a>
+                                <div>
+                                    <h1 className='text-sm'><span className='font-extrabold'>Reporte:</span> {nombre} - {data.defunciones_registraduria.doc} </h1>
+                                    <p className='text-sm'><span className='font-extrabold'>Fecha:</span>{data.defunciones_registraduria.date}</p>
+                                </div>
+
                             </div>
 
                         </div>
-                        <p className="text-xl font-semibold mb-5">{nombre}</p>
+                    </header>
+                    <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
+
+                        <p className="text-xl font-semibold mb-5">{nombre ? nombre : 'No se pudo identificar'}</p>
 
                         <div className="grid grid-cols-1  md:grid-cols-4  lg:grid-cols-7 gap-4 mb-5">
                             <div className="flex gap-2 flex-col">
@@ -627,7 +651,7 @@ const Reporte = ({ auth, data }) => {
 
 
             </div>
-        </AuthenticatedLayout >
+        </div>
     );
 }
 

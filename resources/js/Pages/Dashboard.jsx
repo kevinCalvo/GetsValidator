@@ -11,11 +11,11 @@ export default function Dashboard({ auth }) {
         tipodoc: 'CC',
         date: '',
         value: '',
+        nombre: '',
         acceptedTerms: false,
     });
     const { flash } = usePage().props;
     const [formError, setFormError] = useState(null);
-
 
 
     useEffect(() => {
@@ -33,6 +33,8 @@ export default function Dashboard({ auth }) {
         }
     }, [flash]);
 
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!data.acceptedTerms) {
@@ -43,6 +45,7 @@ export default function Dashboard({ auth }) {
             await post(route("antecedentes"), {
                 onSuccess: () => {
                     console.log("enviado");
+
                 },
                 onError: (errors) => {
                     console.log("error en validacion");
@@ -58,6 +61,7 @@ export default function Dashboard({ auth }) {
                     });
                 },
             });
+
         } catch (error) {
             console.error("Error al enviar el formulario:", error);
         };
@@ -78,7 +82,7 @@ export default function Dashboard({ auth }) {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8  flex gap-x-4">
                     <div className="bg-white p-4 overflow-hidden w-1/2 shadow-sm sm:rounded-lg">
                         <form method="POST" onSubmit={handleSubmit} className="max-w-sm ">
-                            {data.tipodoc === 'nombre' && (
+                            {data.tipodoc === 'NOMBRE' && (
                                 <div className="mb-5">
                                     <label htmlFor="documento" className="block mb-2 text-lg font-medium text-gray-900">Nombre</label>
                                     <input
@@ -112,7 +116,7 @@ export default function Dashboard({ auth }) {
                                     setData("tipodoc", e.target.value)
                                 } >
                                     <option value='CC'>CC</option>
-                                    <option value='nombre'>NOMBRE</option>
+                                    {/*   <option value='NOMBRE'>NOMBRE</option> */}
                                 </select>
                             </div>
                             {data.tipodoc === 'CC' && (
