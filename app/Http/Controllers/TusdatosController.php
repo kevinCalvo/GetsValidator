@@ -23,7 +23,7 @@ class TusdatosController extends Controller
     public function antecedentes(Request $request)
     {
         $request->validate([
-           /*  'documento' => 'required|digits_between:6,10', */
+            'documento' => 'required|digits_between:6,10',
             'tipodoc' => 'required',
             'value' => 'required'
         ], [
