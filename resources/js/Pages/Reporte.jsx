@@ -117,6 +117,7 @@ const Reporte = ({ auth, data }) => {
     const printDocument = () => {
         window.print();
     };
+    const libretaInfo = libretamilitar?.info;
     const cities = [
         'cali',
         'villavicencio',
@@ -790,25 +791,31 @@ const Reporte = ({ auth, data }) => {
                         Object.keys(libretamilitar).length > 0 ? (
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-xl font-semibold mb-5">Libreta Militar</p>
-                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
-                                    <div className="flex gap-2 flex-col">
-                                        <p className="font-semibold">Nombre:</p>
-                                        <p>{libretamilitar.nombre}</p>
+                                {libretaInfo ? (
+                                    <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+                                        <p className="font-bold">Información Importante:</p>
+                                        <p>{libretaInfo}</p>
                                     </div>
-                                    <div className="flex gap-2 flex-col">
-                                        <p className="font-semibold">documento:</p>
-                                        <p>{libretamilitar.documento}</p>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
+                                        <div className="flex gap-2 flex-col">
+                                            <p className="font-semibold">Nombre:</p>
+                                            <p>{libretamilitar.nombre}</p>
+                                        </div>
+                                        <div className="flex gap-2 flex-col">
+                                            <p className="font-semibold">Documento:</p>
+                                            <p>{libretamilitar.documento}</p>
+                                        </div>
+                                        <div className="flex gap-2 flex-col">
+                                            <p className="font-semibold">Tipo de Documento:</p>
+                                            <p>{libretamilitar.tipo_documento}</p>
+                                        </div>
+                                        <div className="flex gap-2 flex-col">
+                                            <p className="font-semibold">Clase:</p>
+                                            <p>{libretamilitar.clase}</p>
+                                        </div>
                                     </div>
-                                    <div className="flex gap-2 flex-col">
-                                        <p className="font-semibold">tipo de documento:</p>
-                                        <p>{libretamilitar.tipo_documento}</p>
-                                    </div>
-
-                                    <div className="flex gap-2 flex-col">
-                                        <p className="font-semibold">clase:</p>
-                                        <p>{libretamilitar.clase}</p>
-                                    </div>
-                                </div>
+                                )}
                             </div>
                         ) : (
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
@@ -822,7 +829,6 @@ const Reporte = ({ auth, data }) => {
                             <p>No registra en la fuente</p>
                         </div>
                     )}
-
 
                     {dest ? (
                         <div>
