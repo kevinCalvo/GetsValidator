@@ -16,9 +16,9 @@ const groupByCategory = (data, categoryField) => {
 
 
 const Reporte = ({ auth, data }) => {
-    /*   console.log('Data completa:', data); */
+    console.log('Data completa:', data);
 
-    const { rut, runt_app, nombre, registraduria_certificado, peps, peps_consolidado, peps_denon, ofac, ofac_nombre, lista_onu, europol, interpol, procuraduria, contraloria, contaduria, defunciones_registraduria, insolvencias, policia, delitos_sexuales, rut_estado, proveedores_ficticios, juzgados_tyba, contadores_s, simit, rama } = data;
+    const { rut, runt_app, nombre, registraduria_certificado, peps, peps_consolidado, peps_denon, ofac, ofac_nombre, lista_onu, europol, interpol, procuraduria, contraloria, contaduria, defunciones_registraduria, insolvencias, policia, delitos_sexuales, rut_estado, proveedores_ficticios, juzgados_tyba, contadores_s, simit, rama, sisben, dest, libretamilitar, secop } = data;
     const licencias = runt_app?.licencia?.licencias || [];
     const totalLicencias = runt_app?.licencia?.totalLicencias || 0;
 
@@ -117,6 +117,33 @@ const Reporte = ({ auth, data }) => {
     const printDocument = () => {
         window.print();
     };
+    const cities = [
+        'cali',
+        'villavicencio',
+        'monteria',
+        'tunja',
+        'cartagena',
+        'pasto',
+        'palmira',
+        'neiva',
+        'medellin',
+        'manizales',
+        'florencia',
+        'popayan',
+        'buga',
+        'bucaramanga',
+        'armenia',
+        'bogota',
+        'ibague',
+        'quibdo',
+        'barranquilla',
+        'ladorada',
+        'santamarta',
+        'pereira',
+        'valledupar',
+
+    ];
+
     return (
         <div className='bg-gray-200'>
             <Head title="Reporte" />
@@ -647,11 +674,354 @@ const Reporte = ({ auth, data }) => {
                             ))}
                         </div>
                     </div>
+
+                    {sisben ? (
+                        Object.keys(sisben).length > 0 ? (
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-xl font-semibold mb-5">Información de SISBEN</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Nombre:</p>
+                                        <p>{sisben.Nombre}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Apellido:</p>
+                                        <p>{sisben.Apellido}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Ficha:</p>
+                                        <p>{sisben.Ficha}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Departamento:</p>
+                                        <p>{sisben.Departamento}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Municipio:</p>
+                                        <p>{sisben.Municipio}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Estado:</p>
+                                        <p>{sisben.Estado}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Grupo:</p>
+                                        <p>{sisben.Grupo}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Tipo de grupo:</p>
+                                        <p>{sisben['Tipo de grupo']}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Actualización Ciudadano:</p>
+                                        <p>{sisben['Actualizacion Ciudadano']}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-xl font-semibold mb-5">Información de SISBEN</p>
+                                <p>No registra en la fuente</p>
+                            </div>
+                        )
+                    ) : (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5">Información de SISBEN</p>
+                            <p>No registra en la fuente</p>
+                        </div>
+                    )}
+                    {secop ? (
+                        Object.keys(secop).length > 0 ? (
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-xl font-semibold mb-5">Contratación Pública en SECOP</p>
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Nombre Del Represen Legal:</p>
+                                        <p>{secop.nombre_del_represen_legal}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Nombre De La Entidad:</p>
+                                        <p>{secop.nombre_de_la_entidad}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Detalle Del Objeto A Contratar:</p>
+                                        <p>{secop.detalle_del_objeto_a_contratar}</p>
+                                    </div>
+
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Cuantia Proceso:</p>
+                                        <p>{secop.cuantia_proceso}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Estado Del Proceso:</p>
+                                        <p>{secop.estado_del_proceso}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Tipo De Contrato:</p>
+                                        <p>{secop.tipo_de_contrato}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Tipo De Proceso:</p>
+                                        <p>{secop.tipo_de_proceso}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Url Proceso En Secop:</p>
+                                        <p>{secop.url_proceso_en_secop}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Fecha De Firma Del Contrato:</p>
+                                        <p>{secop.fecha_de_firma_del_contrato}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-xl font-semibold mb-5">Contratación Pública en SECOP</p>
+                                <p>No registra en la fuente</p>
+                            </div>
+                        )
+                    ) : (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5">Contratación Pública en SECOP</p>
+                            <p>No registra en la fuente</p>
+                        </div>
+                    )}
+                    {libretamilitar ? (
+                        Object.keys(libretamilitar).length > 0 ? (
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-xl font-semibold mb-5">Libreta Militar</p>
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">Nombre:</p>
+                                        <p>{libretamilitar.nombre}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">documento:</p>
+                                        <p>{libretamilitar.documento}</p>
+                                    </div>
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">tipo de documento:</p>
+                                        <p>{libretamilitar.tipo_documento}</p>
+                                    </div>
+
+                                    <div className="flex gap-2 flex-col">
+                                        <p className="font-semibold">clase:</p>
+                                        <p>{libretamilitar.clase}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-xl font-semibold mb-5">Libreta Militar</p>
+                                <p>No registra en la fuente</p>
+                            </div>
+                        )
+                    ) : (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5">Libreta Militar</p>
+                            <p>No registra en la fuente</p>
+                        </div>
+                    )}
+
+
+                    {dest ? (
+                        <div>
+
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">Evidencias</p>
+                                <p className="text-2xl font-semibold mb-5">Antecedentes Juduciales</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/policia.jpg`}
+                                        alt="Imagen"
+                                        className="w-[70%]   mt-2"
+                                    />
+                                </div>
+
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">Instituto Nacional Penitenciario y Carcelario (INPEC)</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/inpec.jpg`}
+                                        alt="Imagen"
+                                        className="w-[70%]   mt-2"
+                                    />
+                                </div>
+
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">Procuraduría General de la Nación (Consulta en Línea)</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/procuraduria.jpg`}
+                                        alt="Imagen"
+                                        className="w-[70%]   mt-2"
+                                    />
+                                </div>
+
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">Lista Clinton (OFAC), Búsqueda por Documento</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/ofac.jpg`}
+                                        alt="Imagen"
+                                        className="w-[70%]   mt-2"
+                                    />
+                                </div>
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">Lista Clinton (OFAC), Búsqueda por nombre</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/ofac_nombre.jpg`}
+                                        alt="Imagen"
+                                        className="   mt-2"
+                                    />
+                                </div>
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">Consejo de Seguridad de la Naciones Unidas (ONU)</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/onu.jpg`}
+                                        alt="Imagen"
+                                        className="   mt-2"
+                                    />
+                                </div>
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">Organización Internacional de Policía Criminal (INTERPOL)</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/interpol.jpg`}
+                                        alt="Imagen"
+                                        className="   mt-2"
+                                    />
+                                </div>
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">European Union Most Wanted List (EUROPOL)</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/europol.jpg`}
+                                        alt="Imagen"
+                                        className="   mt-2"
+                                    />
+                                </div>
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">CIDOB Peps nivel mundial</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/cidob.jpg`}
+                                        alt="Imagen"
+                                        className="   mt-2"
+                                    />
+                                </div>
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">Libreta militar</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/libretamilitar.jpg`}
+                                        alt="Imagen"
+                                        className="   mt-2"
+                                    />
+                                </div>
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">Juzgados Tyba - Justicia XXI</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/tyba.jpg`}
+                                        alt="Imagen"
+                                        className="   mt-2"
+                                    />
+                                </div>
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">
+                                    Juzgados de Ejecución de Penas y Medidas de Seguridad (JEPMS)
+                                </p>
+                                <div className="flex justify-center flex-col items-center">
+                                    {cities.map((city) => (
+                                        <div key={city} className="flex justify-center items-center flex-col mb-4">
+                                            <p className="text-2xl font-semibold mb-2">{city.charAt(0).toUpperCase() + city.slice(1)}</p>
+                                            <img
+                                                src={`https://static.tusdatos.co/${dest}/${city}jepms.jpg`}
+                                                alt={`Imagen de ${city}`}
+                                                className="mt-2"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">Contaduría General de la Nación</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/contaduria.jpg`}
+                                        alt="Imagen"
+                                        className="   mt-2"
+                                    />
+                                </div>
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">Contraloría General de la República (Consulta en Línea)</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/contraloria.jpg`}
+                                        alt="Imagen"
+                                        className="   mt-2"
+                                    />
+                                </div>
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">Defunciones Registraduria</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/defunciones_registraduria.jpg`}
+                                        alt="Imagen"
+                                        className="   mt-2"
+                                    />
+                                </div>
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">Sistema Integrado de Multas y Sanciones de Tránsito (SIMIT)</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/simit.jpg`}
+                                        alt="Imagen"
+                                        className="   mt-2"
+                                    />
+                                </div>
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                                <p className="text-2xl font-semibold mb-5">RUT (Registro Único Tributario)</p>
+                                <div className='flex justify-center items-center'>
+                                    <img
+                                        src={`https://static.tusdatos.co/${dest}/rut.jpg`}
+                                        alt="Imagen"
+                                        className="   mt-2"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                    ) : (
+                        <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5">Imagen</p>
+                            <p>No hay imagen disponible</p>
+                        </div>
+                    )}
+
                 </div>
 
 
             </div>
-        </div>
+        </div >
     );
 }
 
