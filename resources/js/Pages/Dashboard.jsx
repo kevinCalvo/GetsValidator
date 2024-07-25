@@ -6,7 +6,7 @@ import 'flowbite';
 import Swal from 'sweetalert2';
 
 export default function Dashboard({ auth }) {
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing } = useForm({
         documento: '',
         tipodoc: 'CC',
         date: '',
@@ -16,20 +16,13 @@ export default function Dashboard({ auth }) {
     });
     const { flash } = usePage().props;
     const [formError, setFormError] = useState(null);
+    const { errors } = usePage().props;
+
 
 
     useEffect(() => {
         if (flash && flash.error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: flash.errors.error,
-            });
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: flash.errors.error,
-            });
+            setFormError(flash.error);
         }
     }, [flash]);
 

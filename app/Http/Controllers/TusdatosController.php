@@ -1,11 +1,13 @@
 <?php
 namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use App\Models\Consult;
+use Carbon\Carbon;
 
 class TusdatosController extends Controller
 {
@@ -20,6 +22,7 @@ class TusdatosController extends Controller
         $this->endpoint = env('ENDPOINT_TUSDATOS');
     }
 
+
     public function antecedentes(Request $request)
     {
         $request->validate([
@@ -33,35 +36,30 @@ class TusdatosController extends Controller
             'value.required' => 'El campo de tipo es obligatorio.'
         ]);
 
+        $fechaExp = $request->date ? date('d/m/Y', strtotime($request->date)) : null;
+
         try {
+            $verificationResponse = $this->launchVerify($request->documento, $fechaExp);
+
+            if (!empty($verificationResponse['findings'])) {
+                $errors = implode(', ', $verificationResponse['findings']);
+
+                return redirect()->back()->withErrors([$errors]);
+            }
+
             $consult = Consult::where('doc', $request->documento)->first();
 
             if ($consult) {
+                $consult->fechaE = $fechaExp;
+                $consult->save();
+
                 $json = $consult->report;
             } else {
-                $identifier = $this->launchRequest($request->documento, $request->tipodoc, $request->date);
+                $identifier = $this->launchRequest($request->documento, $request->tipodoc, $fechaExp);
                 if ($this->isFinalizedId($identifier)) {
                     $json = $this->fetchFinalReport($identifier);
                 } else {
                     $json = $this->fetchReportAsync($identifier);
-
-
-                    if ($json) {
-
-                        $nombre = $json['nombre'] ?? null;
-                        $fechaR = $json['defunciones_registraduria']['date'] ?? null;
-
-                        $consult = Consult::create([
-                            'doc' => $request->documento,
-                            'typedoc' => $request->tipodoc,
-                            'fechaE' => $request->date,
-                            'typeofentry' => $request->value,
-                            'name' => $nombre,
-                            'fechaR' => $fechaR,
-                            'report' => $json,
-                        ]);
-                        return redirect()->route('report.show', ['doc' => $request->documento]);
-                    }
                 }
 
                 $nombre = $json['nombre'] ?? null;
@@ -70,14 +68,13 @@ class TusdatosController extends Controller
                 $consult = Consult::create([
                     'doc' => $request->documento,
                     'typedoc' => $request->tipodoc,
-                    'fechaE' => $request->date,
+                    'fechaE' => $fechaExp,
                     'typeofentry' => $request->value,
                     'name' => $nombre,
                     'fechaR' => $fechaR,
                     'report' => $json,
                 ]);
             }
-            /* dd($json); */
 
             return redirect()->route('report.show', ['doc' => $request->documento]);
         } catch (\Exception $exception) {
@@ -85,12 +82,33 @@ class TusdatosController extends Controller
         }
     }
 
-    private function launchRequest($documento, $tipodoc, $fechaE)
+    private function launchVerify($documento, $fechaExp)
+{
+    $data = [
+        'cedula' => $documento,
+        'fechaE' => $fechaExp,
+    ];
+
+    $response = Http::withBasicAuth($this->correo, $this->pass)
+        ->post("{$this->endpoint}/launch/verify", $data);
+    $responseData = $response->json();
+
+    if ($response->failed()) {
+        throw new \Exception('Error al verificar la cédula');
+    }
+
+    Log::info('Resultado de la verificación:', $responseData);
+
+    return $responseData;
+}
+
+    private function launchRequest($documento, $tipodoc, $fechaExp)
     {
         $data = [
             'doc' => $documento,
             'typedoc' => $tipodoc,
-            'fechaE' => $fechaE,
+            'fechaE' => $fechaExp,
+
         ];
 
         $launch = Http::withBasicAuth($this->correo, $this->pass)
@@ -101,7 +119,6 @@ class TusdatosController extends Controller
         }
 
         $launchData = $launch->json();
-
         if (!isset($launchData['jobid']) && !isset($launchData['id'])) {
             throw new \Exception('Job ID no encontrado');
         }
@@ -135,7 +152,6 @@ class TusdatosController extends Controller
 
             if (isset($statusResponse['estado'])) {
                 if ($statusResponse['estado'] === 'finalizado') {
-
                     return $this->fetchFinalReport($statusResponse['id']);
                 } elseif ($statusResponse['estado'] === 'procesando') {
                     Log::info("Intento {$attempt}: El reporte aún está en proceso.");
@@ -145,7 +161,6 @@ class TusdatosController extends Controller
             } else {
                 throw new \Exception('Estado desconocido del job');
             }
-
 
             sleep($delay);
             $attempt++;
@@ -166,7 +181,7 @@ class TusdatosController extends Controller
 
         $statusData = $response->json();
         Log::info('Estado del job consultado:', $statusData);
-        return $statusData ;
+        return $statusData;
     }
 
     private function isFinalizedId($identifier)

@@ -16,7 +16,7 @@ const groupByCategory = (data, categoryField) => {
 
 
 const Reporte = ({ auth, data }) => {
-    console.log('Data completa:', data);
+    /*   console.log('Data completa:', data); */
 
     const { rut, runt_app, nombre, registraduria_certificado, peps, peps_consolidado, peps_denon, ofac, ofac_nombre, lista_onu, europol, interpol, procuraduria, contraloria, contaduria, defunciones_registraduria, insolvencias, policia, delitos_sexuales, rut_estado, proveedores_ficticios, juzgados_tyba, contadores_s, simit, rama, sisben, dest, libretamilitar, secop } = data;
     const licencias = runt_app?.licencia?.licencias || [];
@@ -158,7 +158,7 @@ const Reporte = ({ auth, data }) => {
                     </a>
                     <div className='flex gap-x-2'>
 
-                        <button onClick={generatePDF} className="bg-[#C39BD3] h-9 text-sm p-2 rounded-lg">Descargar PDF</button>
+                        {/*  <button onClick={generatePDF} className="bg-[#C39BD3] h-9 text-sm p-2 rounded-lg">Descargar PDF</button> */}
                         <button
                             onClick={printDocument}
                             className="bg-[#C39BD3] h-9 text-sm p-2 rounded-lg"
@@ -411,10 +411,13 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     )}
                     {contaduria && (
-                        <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
-                            <p className="text-xl font-semibold mb-5">Contaduría General de la Nación
-                            </p>
-                            {contaduria ? (
+                        <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5">Contaduría General de la Nación</p>
+                            {contaduria === "Error" ? (
+                                <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
+                                    La fuente de consulta presenta indisponibilidad.
+                                </div>
+                            ) : contaduria ? (
                                 <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mb-5">
                                     <div className="flex gap-2 flex-col">
                                         <p>{data.contaduria_hallazgo}</p>
@@ -583,67 +586,74 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     </div>
 
-                    <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
+                    <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">Información SIMIT</p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mb-5">
-                            {/* Información General */}
-                            <div className="p-4 border border-gray-200 rounded-lg ">
-                                <h3 className="text-lg font-semibold mb-4">Resumen General</h3>
-                                <p><strong>Número de Documento:</strong> {simit.numero_documento}</p>
-                                <p><strong>Total General:</strong> {simit.total_general.toLocaleString()}</p>
-                                <p><strong>Total Multas:</strong> {simit.total_multas.toLocaleString()}</p>
-                                <p><strong>Total Multas a Pagar:</strong> {simit.total_multas_pagar.toLocaleString()}</p>
-                                <p><strong>Total a Pagar:</strong> {simit.total_pagar.toLocaleString()}</p>
-                                <p><strong>Acuerdos por Pagar:</strong> {simit.total_acuardos_por_pagar.toLocaleString()}</p>
-                                <p><strong>Paz y Salvo:</strong> {simit.paz_salvo ? "Sí" : "No"}</p>
+                        {/* Verifica si `simit` tiene un error */}
+                        {simit && simit === 'Error' ? (
+                            <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
+                                La fuente de consulta presenta indisponibilidad.
                             </div>
-
-                            {/* Cursos */}
-                            {simit.cursos.length > 0 && (
-                                <div className="p-4 border border-gray-200 rounded-lg ">
-                                    <h3 className="text-lg font-semibold mb-4">Cursos</h3>
-                                    {simit.cursos.map((curso, index) => (
-                                        <div key={index} className="mb-4 border-t pt-4">
-                                            <p><strong>Centro de Instrucción:</strong> {curso.centro_intruccion}</p>
-                                            <p><strong>Certificado:</strong> {curso.certificado}</p>
-                                            <p><strong>Ciudad:</strong> {curso.cuidad}</p>
-                                            <p><strong>Estado:</strong> {curso.estado}</p>
-                                            <p><strong>Fecha Comparendo:</strong> {curso.fecha_comparendo || "No disponible"}</p>
-                                            <p><strong>Fecha del Curso:</strong> {curso.fecha_curso}</p>
-                                            <p><strong>Fecha de Reporte:</strong> {curso.fecha_reporte}</p>
-                                            <p><strong>Número de Multa:</strong> {curso.numero_multa}</p>
-                                        </div>
-                                    ))}
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mb-5">
+                                {/* Información General */}
+                                <div className="p-4 border border-gray-200 rounded-lg">
+                                    <h3 className="text-lg font-semibold mb-4">Resumen General</h3>
+                                    <p><strong>Número de Documento:</strong> {simit.numero_documento || "No disponible"}</p>
+                                    <p><strong>Total General:</strong> {simit.total_general ? simit.total_general.toLocaleString() : "No disponible"}</p>
+                                    <p><strong>Total Multas:</strong> {simit.total_multas ? simit.total_multas.toLocaleString() : "No disponible"}</p>
+                                    <p><strong>Total Multas a Pagar:</strong> {simit.total_multas_pagar ? simit.total_multas_pagar.toLocaleString() : "No disponible"}</p>
+                                    <p><strong>Total a Pagar:</strong> {simit.total_pagar ? simit.total_pagar.toLocaleString() : "No disponible"}</p>
+                                    <p><strong>Acuerdos por Pagar:</strong> {simit.total_acuardos_por_pagar ? simit.total_acuardos_por_pagar.toLocaleString() : "No disponible"}</p>
+                                    <p><strong>Paz y Salvo:</strong> {simit.paz_salvo ? "Sí" : "No"}</p>
                                 </div>
-                            )}
 
-                            {/* Multas */}
-                            {simit.multas.length > 0 && (
-                                <div className="p-4 border border-gray-200 rounded-lg ">
-                                    <h3 className="text-lg font-semibold mb-4">Multas</h3>
-                                    {simit.multas.map((multa, index) => (
-                                        <div key={index} className="mb-4 border-t pt-4">
-                                            <p><strong>Comparendo:</strong> {multa.comparendo ? "Sí" : "No"}</p>
-                                            <p><strong>Comparendo Electrónico:</strong> {multa.comparendo_electronico ? "Sí" : "No"}</p>
-                                            <p><strong>Consecutivo Comparendo:</strong> {multa.consecutivo_comparendo || "No disponible"}</p>
-                                            <p><strong>Departamento:</strong> {multa.departamento}</p>
-                                            <p><strong>Estado:</strong> {multa.estado || "No disponible"}</p>
-                                            <p><strong>Fecha Comparendo:</strong> {multa.fecha_comparendo}</p>
-                                            <p><strong>Fecha Notificación:</strong> {multa.fecha_notificacion || "No disponible"}</p>
-                                            <p><strong>Número Comparendo:</strong> {multa.numero_comparendo}</p>
-                                            <p><strong>Organismo de Tránsito:</strong> {multa.organismo_transito}</p>
-                                            <p><strong>Placa:</strong> {multa.placa}</p>
-                                            <p><strong>Total a Pagar:</strong> {multa.total_pagar.toLocaleString()}</p>
-                                            <p><strong>Valor Descuento:</strong> {multa.valor_descuento.toLocaleString()}</p>
-                                            <p><strong>Valor Descuento Interés:</strong> {multa.valor_descuento_interes.toLocaleString()}</p>
-                                            <p><strong>Valor Descuento Pronto Pago:</strong> {multa.valor_descuento_pronto_pago.toLocaleString()}</p>
-                                            <p><strong>Valor Interés:</strong> {multa.valor_interes.toLocaleString()}</p>
-                                            <p><strong>Valor Multa:</strong> {multa.valor_multa.toLocaleString()}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+                                {/* Cursos */}
+                                {simit.cursos && simit.cursos.length > 0 && (
+                                    <div className="p-4 border border-gray-200 rounded-lg">
+                                        <h3 className="text-lg font-semibold mb-4">Cursos</h3>
+                                        {simit.cursos.map((curso, index) => (
+                                            <div key={index} className="mb-4 border-t pt-4">
+                                                <p><strong>Centro de Instrucción:</strong> {curso.centro_intruccion || "No disponible"}</p>
+                                                <p><strong>Certificado:</strong> {curso.certificado || "No disponible"}</p>
+                                                <p><strong>Ciudad:</strong> {curso.cuidad || "No disponible"}</p>
+                                                <p><strong>Estado:</strong> {curso.estado || "No disponible"}</p>
+                                                <p><strong>Fecha Comparendo:</strong> {curso.fecha_comparendo || "No disponible"}</p>
+                                                <p><strong>Fecha del Curso:</strong> {curso.fecha_curso || "No disponible"}</p>
+                                                <p><strong>Fecha de Reporte:</strong> {curso.fecha_reporte || "No disponible"}</p>
+                                                <p><strong>Número de Multa:</strong> {curso.numero_multa || "No disponible"}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Multas */}
+                                {simit.multas && simit.multas.length > 0 && (
+                                    <div className="p-4 border border-gray-200 rounded-lg">
+                                        <h3 className="text-lg font-semibold mb-4">Multas</h3>
+                                        {simit.multas.map((multa, index) => (
+                                            <div key={index} className="mb-4 border-t pt-4">
+                                                <p><strong>Comparendo:</strong> {multa.comparendo ? "Sí" : "No"}</p>
+                                                <p><strong>Comparendo Electrónico:</strong> {multa.comparendo_electronico ? "Sí" : "No"}</p>
+                                                <p><strong>Consecutivo Comparendo:</strong> {multa.consecutivo_comparendo || "No disponible"}</p>
+                                                <p><strong>Departamento:</strong> {multa.departamento || "No disponible"}</p>
+                                                <p><strong>Estado:</strong> {multa.estado || "No disponible"}</p>
+                                                <p><strong>Fecha Comparendo:</strong> {multa.fecha_comparendo || "No disponible"}</p>
+                                                <p><strong>Fecha Notificación:</strong> {multa.fecha_notificacion || "No disponible"}</p>
+                                                <p><strong>Número Comparendo:</strong> {multa.numero_comparendo || "No disponible"}</p>
+                                                <p><strong>Organismo de Tránsito:</strong> {multa.organismo_transito || "No disponible"}</p>
+                                                <p><strong>Placa:</strong> {multa.placa || "No disponible"}</p>
+                                                <p><strong>Total a Pagar:</strong> {multa.total_pagar ? multa.total_pagar.toLocaleString() : "No disponible"}</p>
+                                                <p><strong>Valor Descuento:</strong> {multa.valor_descuento ? multa.valor_descuento.toLocaleString() : "No disponible"}</p>
+                                                <p><strong>Valor Descuento Interés:</strong> {multa.valor_descuento_interes ? multa.valor_descuento_interes.toLocaleString() : "No disponible"}</p>
+                                                <p><strong>Valor Descuento Pronto Pago:</strong> {multa.valor_descuento_pronto_pago ? multa.valor_descuento_pronto_pago.toLocaleString() : "No disponible"}</p>
+                                                <p><strong>Valor Interés:</strong> {multa.valor_interes ? multa.valor_interes.toLocaleString() : "No disponible"}</p>
+                                                <p><strong>Valor Multa:</strong> {multa.valor_multa ? multa.valor_multa.toLocaleString() : "No disponible"}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                     <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">Contadores sancionados
@@ -966,13 +976,19 @@ const Reporte = ({ auth, data }) => {
                             </div>
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-2xl font-semibold mb-5">Contaduría General de la Nación</p>
-                                <div className='flex justify-center items-center'>
-                                    <img
-                                        src={`https://static.tusdatos.co/${dest}/contaduria.jpg`}
-                                        alt="Imagen"
-                                        className="   mt-2"
-                                    />
-                                </div>
+                                {contaduria && contaduria === 'Error' ? (
+                                    <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
+                                        La fuente de consulta presenta indisponibilidad.
+                                    </div>
+                                ) : (
+                                    <div className='flex justify-center items-center'>
+                                        <img
+                                            src={`https://static.tusdatos.co/${dest}/contaduria.jpg`}
+                                            alt="Imagen"
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                )}
                             </div>
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-2xl font-semibold mb-5">Contraloría General de la República (Consulta en Línea)</p>
@@ -996,13 +1012,19 @@ const Reporte = ({ auth, data }) => {
                             </div>
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-2xl font-semibold mb-5">Sistema Integrado de Multas y Sanciones de Tránsito (SIMIT)</p>
-                                <div className='flex justify-center items-center'>
-                                    <img
-                                        src={`https://static.tusdatos.co/${dest}/simit.jpg`}
-                                        alt="Imagen"
-                                        className="   mt-2"
-                                    />
-                                </div>
+                                {simit && simit === "Error" ? (
+                                    <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
+                                        La fuente de consulta presenta indisponibilidad.
+                                    </div>
+                                ) : (
+                                    <div className='flex justify-center items-center'>
+                                        <img
+                                            src={`https://static.tusdatos.co/${dest}/simit.jpg`}
+                                            alt="Imagen"
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                )}
                             </div>
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-2xl font-semibold mb-5">RUT (Registro Único Tributario)</p>
