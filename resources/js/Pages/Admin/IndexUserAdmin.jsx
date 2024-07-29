@@ -49,9 +49,9 @@ const IndexUserAdmin = ({ auth, users }) => {
                                                     })}
                                                 </td>
                                                 <td className="px-4 py-3 border-b">
-                                                    <Link /* href={route('planesedit.admin', [user.id])} */>
+                                                    {/*  <Link href={route('planesedit.admin', [user.id])}>
                                                         <box-icon color="purple" name='edit'></box-icon>
-                                                    </Link>
+                                                    </Link> */}
 
                                                     <button
                                                         onClick={() =>

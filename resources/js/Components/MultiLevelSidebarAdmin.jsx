@@ -16,6 +16,7 @@ import {
     ShoppingBagIcon,
     UserCircleIcon,
     Cog6ToothIcon,
+
     InboxIcon,
     PowerIcon,
 } from "@heroicons/react/24/solid";
@@ -41,7 +42,7 @@ export function MultiLevelSidebarAdmin() {
 
                 <ListItem>
                     <ListItemPrefix>
-                        <UserCircleIcon className="h-5 w-5" />
+                        <PresentationChartBarIcon className="h-5 w-5" />
                     </ListItemPrefix>
                     <NavLink href={route('dashboard.admin')} active={route().current('dashboard.admin')}>
                         Dashboard
@@ -60,9 +61,9 @@ export function MultiLevelSidebarAdmin() {
                 <div className="mt-20">
                     <ListItem>
                         <ListItemPrefix>
-                            <UserCircleIcon className="h-5 w-5" />
+                            <Cog6ToothIcon className="h-5 w-5" />
                         </ListItemPrefix>
-                        <NavLink href={route('profile.edit')} active={route().current('profile.edit')}>
+                        <NavLink href={route('profile.editAdmin')} active={route().current('profile.editAdmin')}>
                             Perfil
                         </NavLink>
 

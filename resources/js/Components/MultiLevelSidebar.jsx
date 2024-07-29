@@ -91,7 +91,7 @@ export function MultiLevelSidebar() {
                 <div className="mt-20">
                     <ListItem>
                         <ListItemPrefix>
-                            <UserCircleIcon className="h-5 w-5" />
+                            <Cog6ToothIcon className="h-5 w-5" />
                         </ListItemPrefix>
                         <NavLink href={route('profile.edit')} active={route().current('profile.edit')}>
                             Perfil

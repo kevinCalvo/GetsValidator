@@ -3,10 +3,11 @@ import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 import { Head } from '@inertiajs/react';
+import AuthenticatedLayoutAdmin from '@/Layouts/AuthenticatedLayoutAdmin';
 
-export default function Edit({ auth, mustVerifyEmail, status }) {
+export default function EditAdmin({ auth, mustVerifyEmail, status }) {
     return (
-        <AuthenticatedLayout
+        <AuthenticatedLayoutAdmin
             user={auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Perfil</h2>}
         >
@@ -34,6 +35,6 @@ export default function Edit({ auth, mustVerifyEmail, status }) {
 
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </AuthenticatedLayoutAdmin>
     );
 }

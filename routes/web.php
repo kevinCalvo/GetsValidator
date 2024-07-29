@@ -38,6 +38,7 @@ Route::middleware(['auth','verified','role:admin'])->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profileAdmin', [ProfileController::class, 'editAdmin'])->name('profile.editAdmin')->middleware('role:admin');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
