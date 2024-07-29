@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use App\Models\Consult;
+use App\Models\User;
 use Carbon\Carbon;
 
 class TusdatosController extends Controller
@@ -35,6 +36,9 @@ class TusdatosController extends Controller
             'tipodoc.required' => 'El tipo de documento es obligatorio.',
             'value.required' => 'El campo de tipo es obligatorio.'
         ]);
+
+
+
 
         $fechaExp = $request->date ? date('d/m/Y', strtotime($request->date)) : null;
 
@@ -136,6 +140,67 @@ class TusdatosController extends Controller
             return $response->json();
         } else {
             throw new \Exception('Error al obtener el reporte');
+        }
+    }
+    private function getPlans()
+    {
+
+        $users = User::whereDoesntHave('roles', function ($query) {
+            $query->where('name', 'admin');
+        })->count();
+
+        $cacheKey = 'plans_and_queries';
+        $cacheDuration = 60;
+
+
+        $cachedData = cache($cacheKey);
+
+        if ($cachedData) {
+
+            \Log::info('Datos obtenidos de la caché');
+            return $cachedData;
+        }
+
+
+        $response = Http::withBasicAuth($this->correo, $this->pass)
+            ->get("{$this->endpoint}/plans");
+
+        if ($response->successful()) {
+            $plans = $response->json();
+        } else {
+            throw new \Exception('Error al obtener los planes');
+        }
+
+
+        $responseQuerys = Http::withBasicAuth($this->correo, $this->pass)
+            ->get("{$this->endpoint}/querys");
+
+        if ($responseQuerys->successful()) {
+            $queries = $responseQuerys->json();
+        } else {
+            throw new \Exception('Error al obtener las consultas');
+        }
+
+
+        $data = [
+            'plans' => $plans,
+            'queries' => $queries,
+            'users' => $users
+        ];
+
+
+        cache([$cacheKey => $data], $cacheDuration);
+        \Log::info('Datos guardados en la caché');
+
+        return $data;
+    }    public function showPlans()
+    {
+        try {
+            $data = $this->getPlans();
+           /*  dd($data); */
+            return Inertia::render('Admin/DashboardAdmin', $data);
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('errorMessage', $exception->getMessage());
         }
     }
 

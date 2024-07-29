@@ -6,8 +6,9 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
 import { MultiLevelSidebar } from '@/Components/MultiLevelSidebar';
 import 'boxicons'
+import { MultiLevelSidebarAdmin } from '@/Components/MultiLevelSidebarAdmin';
 
-export default function AuthenticatedLayout({ user, header, children }) {
+export default function AuthenticatedLayoutAdmin({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const [showSidebar, setShowSidebar] = useState(true);
 
@@ -25,7 +26,7 @@ export default function AuthenticatedLayout({ user, header, children }) {
                                 </Link>
                                 <div className='flex gap-x-2 justify-center items-center'>
                                     {!showSidebar && (
-                                        <h5 className='block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-blue-gray-900'>Gets Validator</h5>
+                                        <h5 className='block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-blue-gray-900'>Gets Validator Admin</h5>
                                     )}
                                     <button
                                         onClick={() => setShowSidebar(!showSidebar)}
@@ -136,7 +137,7 @@ export default function AuthenticatedLayout({ user, header, children }) {
             <main className="flex flex-grow">
                 {showSidebar && (
                     <div className="">
-                        <MultiLevelSidebar />
+                        <MultiLevelSidebarAdmin />
                     </div>
 
                 )}
