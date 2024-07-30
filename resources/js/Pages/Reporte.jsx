@@ -16,7 +16,7 @@ const groupByCategory = (data, categoryField) => {
 
 
 const Reporte = ({ auth, data }) => {
-    /*   console.log('Data completa:', data); */
+    console.log('Data completa:', data);
 
     const { rut, runt_app, nombre, registraduria_certificado, peps, peps_consolidado, peps_denon, ofac, ofac_nombre, lista_onu, europol, interpol, procuraduria, contraloria, contaduria, defunciones_registraduria, insolvencias, policia, delitos_sexuales, rut_estado, proveedores_ficticios, juzgados_tyba, contadores_s, simit, rama, sisben, dest, libretamilitar, secop } = data;
     const licencias = runt_app?.licencia?.licencias || [];

@@ -1,8 +1,24 @@
 
 import AuthenticatedLayoutAdmin from '@/Layouts/AuthenticatedLayoutAdmin';
 import { Head, useForm, Link, usePage } from "@inertiajs/react";
+import React, { useEffect, useState } from 'react';
 
 const DashboardAdmin = ({ auth, plans, queries, users }) => {
+    const [data, setData] = useState({ plans, queries, users });
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch('/admin-dashboard');
+            const newData = await response.json();
+            setData(newData);
+        };
+
+
+        const interval = setInterval(() => {
+            fetchData();
+        }, 300000);
+
+        return () => clearInterval(interval);
+    }, []);
     return (
         <AuthenticatedLayoutAdmin
             user={auth.user}

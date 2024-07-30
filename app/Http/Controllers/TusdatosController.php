@@ -1,10 +1,12 @@
 <?php
 namespace App\Http\Controllers;
-namespace App\Http\Controllers;
+
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
+use App\Jobs\FetchPlansAndQueriesJob;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use App\Models\Consult;
 use App\Models\User;
@@ -142,68 +144,24 @@ class TusdatosController extends Controller
             throw new \Exception('Error al obtener el reporte');
         }
     }
-    private function getPlans()
-    {
 
-        $users = User::whereDoesntHave('roles', function ($query) {
-            $query->where('name', 'admin');
-        })->count();
-
-        $cacheKey = 'plans_and_queries';
-        $cacheDuration = 60;
-
-
-        $cachedData = cache($cacheKey);
-
-        if ($cachedData) {
-
-            \Log::info('Datos obtenidos de la caché');
-            return $cachedData;
-        }
-
-
-        $response = Http::withBasicAuth($this->correo, $this->pass)
-            ->get("{$this->endpoint}/plans");
-
-        if ($response->successful()) {
-            $plans = $response->json();
-        } else {
-            throw new \Exception('Error al obtener los planes');
-        }
-
-
-        $responseQuerys = Http::withBasicAuth($this->correo, $this->pass)
-            ->get("{$this->endpoint}/querys");
-
-        if ($responseQuerys->successful()) {
-            $queries = $responseQuerys->json();
-        } else {
-            throw new \Exception('Error al obtener las consultas');
-        }
-
-
-        $data = [
-            'plans' => $plans,
-            'queries' => $queries,
-            'users' => $users
-        ];
-
-
-        cache([$cacheKey => $data], $cacheDuration);
-        \Log::info('Datos guardados en la caché');
-
-        return $data;
-    }    public function showPlans()
+    public function showPlans()
     {
         try {
-            $data = $this->getPlans();
-           /*  dd($data); */
-            return Inertia::render('Admin/DashboardAdmin', $data);
+            $cacheKey = 'plans_and_queries';
+            $data = Cache::get($cacheKey);
+            FetchPlansAndQueriesJob::dispatch($this->correo, $this->pass, $this->endpoint);
+            Log::info('Cache stored with key: ' . $cacheKey);
+            return Inertia::render('Admin/DashboardAdmin', [
+                'plans' => $data ? $data['plans'] : [],
+                'queries' => $data ? $data['queries'] : [],
+                'users' => $data ? $data['users'] : 0,
+                'loading' => !$data, // Indica si los datos están cargando
+            ]);
         } catch (\Exception $exception) {
             return redirect()->back()->with('errorMessage', $exception->getMessage());
         }
     }
-
     private function fetchReportAsync($jobId)
     {
         set_time_limit(120);
