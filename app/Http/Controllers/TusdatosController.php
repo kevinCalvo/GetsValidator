@@ -47,6 +47,8 @@ class TusdatosController extends Controller
         try {
             $verificationResponse = $this->launchVerify($request->documento, $fechaExp);
 
+           /*  dd($verificationResponse); */
+
             if (!empty($verificationResponse['findings'])) {
                 $errors = implode(', ', $verificationResponse['findings']);
 
@@ -125,6 +127,7 @@ class TusdatosController extends Controller
         }
 
         $launchData = $launch->json();
+
         if (!isset($launchData['jobid']) && !isset($launchData['id'])) {
             throw new \Exception('Job ID no encontrado');
         }
@@ -203,6 +206,7 @@ class TusdatosController extends Controller
         }
 
         $statusData = $response->json();
+
         Log::info('Estado del job consultado:', $statusData);
         return $statusData;
     }

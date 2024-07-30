@@ -146,7 +146,9 @@ export default function Dashboard({ auth }) {
                             <button type="submit" className="text-white bg-[#9c60b4] hover:bg-[#C39BD3] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Generar reporte</button>
                         </form>
                     </div>
-
+                    <div className="bg-white p-4 h-[300px] overflow-hidden w-1/2 shadow-sm sm:rounded-lg">
+                        <h1 className='text-lg font-semibold'>Reporte solicitado</h1>
+                    </div>
                 </div>
             </div>
         </AuthenticatedLayout>
