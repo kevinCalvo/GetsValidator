@@ -133,7 +133,7 @@ class TusdatosController extends Controller
     private function fetchFinalReport($id)
     {
         $response = Http::withBasicAuth($this->correo, $this->pass)
-            ->timeout(120)
+            ->timeout(210)
             ->get("{$this->endpoint}/report_json/{$id}");
 
         if ($response->successful()) {
@@ -206,9 +206,9 @@ class TusdatosController extends Controller
 
     private function fetchReportAsync($jobId)
     {
-        set_time_limit(120);
+        set_time_limit(210);
 
-        $maxAttempts = 14;
+        $maxAttempts = 15;
         $attempt = 0;
         $delay = 15;
 
@@ -237,7 +237,7 @@ class TusdatosController extends Controller
     private function getJobStatus($jobId)
     {
         $response = Http::withBasicAuth($this->correo, $this->pass)
-            ->timeout(120)
+            ->timeout(210)
             ->get("{$this->endpoint}/results/{$jobId}");
 
         if ($response->failed()) {
