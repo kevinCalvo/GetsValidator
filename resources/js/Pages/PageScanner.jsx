@@ -19,19 +19,12 @@ export default function PageScanner({ auth }) {
 
     useEffect(() => {
         if (flash && flash.error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: flash.errors.error,
-            });
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: flash.errors.error,
-            });
+            setFormError(flash.error);
+        }
+        if (flash && flash.status === 'success') {
+            Swal.close();
         }
     }, [flash]);
-
 
     const handleSubmit = async (e) => {
 
@@ -40,6 +33,15 @@ export default function PageScanner({ auth }) {
             setFormError('Debes aceptar los términos para continuar.');
             return;
         }
+        Swal.fire({
+            imageUrl: "/img/r-Gets.png",
+            title: 'Cargando...',
+            text: 'Por favor espera mientras generamos tu reporte',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
         try {
             await post(route("antecedentes"), {
                 onSuccess: () => {
