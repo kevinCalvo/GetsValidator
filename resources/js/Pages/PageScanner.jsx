@@ -45,9 +45,11 @@ export default function PageScanner({ auth }) {
         try {
             await post(route("antecedentes"), {
                 onSuccess: () => {
+                    Swal.close();
                     console.log("enviado");
                 },
                 onError: (errors) => {
+                    Swal.close();
                     console.log("error en validacion");
                     console.log(errors);
                     Swal.fire({
