@@ -19,7 +19,7 @@ const IndexUserAdmin = ({ auth, users }) => {
             <div className="py-10">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 sm:w-full flex sm:flex-col md:flex-row  gap-4">
 
-                    <div className="bg-white p-4 overflow-hidden w-full shadow-sm sm:rounded-lg">
+                    <div className="bg-white p-4 overflow-hidden mx-4 md:mx-auto w-full shadow-sm rounded-lg">
                         <div className='flex justify-between mb-4'>
                             <h3 className="text-lg font-semibold ">Usuarios</h3>
                             <Link className='bg-[#C39BD3] p-2 rounded-lg font-bold' href={route('CreateUser.admin')}>Crear Ususario</Link>
@@ -73,7 +73,7 @@ const IndexUserAdmin = ({ auth, users }) => {
                                 </table>
                             </div>
                         ) : (
-                            <p className="text-gray-500">No hay históricos disponibles.</p>
+                            <p className="text-gray-500">No hay Usuarios Agregados</p>
                         )}
                     </div>
 

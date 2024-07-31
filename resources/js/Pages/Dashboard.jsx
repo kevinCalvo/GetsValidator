@@ -24,8 +24,10 @@ export default function Dashboard({ auth }) {
         if (flash && flash.error) {
             setFormError(flash.error);
         }
+        if (flash && flash.status === 'success') {
+            Swal.close();
+        }
     }, [flash]);
-
 
 
     const handleSubmit = async (e) => {
@@ -34,14 +36,25 @@ export default function Dashboard({ auth }) {
             setFormError('Debes aceptar los términos para continuar.');
             return;
         }
+        Swal.fire({
+            imageUrl: "/img/r-Gets.png",
+            title: 'Cargando...',
+            text: 'Por favor espera mientras generamos tu reporte',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
         try {
             await post(route("antecedentes"), {
                 onSuccess: () => {
                     console.log("enviado");
-
+                    Swal.close();
                 },
                 onError: (errors) => {
+                    Swal.close();
                     console.log("error en validacion");
+
                     console.log(errors);
                     Swal.fire({
                         icon: 'error',
@@ -72,8 +85,8 @@ export default function Dashboard({ auth }) {
             <Head title="Consulta por documento" />
 
             <div className="py-10">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8  flex gap-x-4">
-                    <div className="bg-white p-4 overflow-hidden w-1/2 shadow-sm sm:rounded-lg">
+                <div className="max-w-7xl mx-4 md:mx-auto sm:px-6 lg:px-8  flex gap-x-4">
+                    <div className="bg-white p-4 overflow-hidden m-auto md:m-0 shadow-sm rounded-lg">
                         <form method="POST" onSubmit={handleSubmit} className="max-w-sm ">
                             {data.tipodoc === 'NOMBRE' && (
                                 <div className="mb-5">

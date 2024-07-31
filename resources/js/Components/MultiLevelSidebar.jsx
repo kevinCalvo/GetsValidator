@@ -1,37 +1,33 @@
-import React from "react";
+import React, { useState } from 'react';
 import {
     Card,
     Typography,
     List,
     ListItem,
     ListItemPrefix,
-    ListItemSuffix,
-    Chip,
     Accordion,
     AccordionHeader,
     AccordionBody,
 } from "@material-tailwind/react";
 import {
     PresentationChartBarIcon,
-    ShoppingBagIcon,
     UserCircleIcon,
     Cog6ToothIcon,
-    InboxIcon,
     PowerIcon,
 } from "@heroicons/react/24/solid";
 import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import NavLink from '@/Components/NavLink';
-import { Link } from '@inertiajs/react'
+import { Link } from '@inertiajs/react';
 
-export function MultiLevelSidebar() {
-    const [open, setOpen] = React.useState(0);
+export function MultiLevelSidebar({ screenSize }) {
+    const [open, setOpen] = useState(0);
 
     const handleOpen = (value) => {
         setOpen(open === value ? 0 : value);
     };
 
     return (
-        <Card className=" w-full min-h-screen max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
+        <Card className={`w-full min-h-screen ${screenSize < 640 ? "max-w-full" : "max-w-[20rem]"} p-4 shadow-xl shadow-blue-gray-900/5`}>
             <div className="mb-2 p-4">
                 <Typography variant="h5" color="blue-gray">
                     Gets Validator
@@ -66,7 +62,6 @@ export function MultiLevelSidebar() {
                                 <NavLink href={route('dashboard')} active={route().current('dashboard')}>
                                     Consultas por documento
                                 </NavLink>
-
                             </ListItem>
                             <ListItem>
                                 <ListItemPrefix>
@@ -86,7 +81,6 @@ export function MultiLevelSidebar() {
                     <NavLink href={route('consult.index')} active={route().current('consult.index')}>
                         Historial de consultas
                     </NavLink>
-
                 </ListItem>
                 <div className="mt-20">
                     <ListItem>
@@ -96,8 +90,6 @@ export function MultiLevelSidebar() {
                         <NavLink href={route('profile.edit')} active={route().current('profile.edit')}>
                             Perfil
                         </NavLink>
-
-
                     </ListItem>
                     <ListItem>
                         <ListItemPrefix>
@@ -106,7 +98,6 @@ export function MultiLevelSidebar() {
                         <NavLink as="button" method="post" href={route('logout')}>
                             Cerrar sesion
                         </NavLink>
-
                     </ListItem>
                 </div>
             </List>

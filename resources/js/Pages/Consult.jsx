@@ -11,13 +11,13 @@ export default function Consult({ auth, historicos }) {
         >
             <Head title="Historial" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white p-4 overflow-hidden shadow-sm sm:rounded-lg">
+            <div className="py-10">
+                <div className="max-w-7xl  sm:px-6 lg:px-8 mx-auto">
+                    <div className="bg-white p-4 overflow-hidden mx-4 md:mx-auto shadow-sm rounded-lg">
                         <h3 className="text-lg font-semibold mb-4">Históricos</h3>
                         {historicos.length > 0 ? (
                             <div className="overflow-x-auto">
-                                <table className="min-w-full bg-white border border-gray-200">
+                                <table className="min-w-full max-w-[70%] bg-white border border-gray-200 hidden md:table">
                                     <thead>
                                         <tr>
                                             <th className="px-4 py-2 border-b">Nombre</th>
@@ -46,11 +46,28 @@ export default function Consult({ auth, historicos }) {
                                                         <box-icon type='solid' color='gray' name='report'></box-icon>
                                                     </Link>
                                                 </td>
-
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
+                                <div className="md:hidden">
+                                    {historicos.map((historico) => (
+                                        <div key={historico.id} className="border-b border-gray-200 p-4">
+                                            <div className="font-semibold">Nombre: {historico.name ? historico.name : 'No identificado'}</div>
+                                            <div>Cédula: {historico.doc}</div>
+                                            <div>Fecha de reporte: {historico.fechaR}</div>
+                                            <div>Tipo Documento: {historico.typedoc}</div>
+                                            <div>Fecha de expedición: {historico.fechaE ? historico.fechaE : 'No identificada'}</div>
+                                            <div>Tipo de Entrada: {historico.typeofentry}</div>
+                                            <Link
+                                                href={route('report.show', { doc: historico.doc })}
+                                                className="text-blue-500 hover:underline mt-2 inline-block"
+                                            >
+                                                Ver Reporte
+                                            </Link>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         ) : (
                             <p className="text-gray-500">No hay históricos disponibles.</p>

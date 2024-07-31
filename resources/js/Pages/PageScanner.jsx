@@ -74,9 +74,9 @@ export default function PageScanner({ auth }) {
         >
             <Head title="Consulta Scanner" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white p-4 overflow-hidden shadow-sm sm:rounded-lg">
+            <div className="py-10">
+                <div className="max-w-7xl mx-4 md:mx-auto sm:px-6 lg:px-8  flex gap-x-4">
+                    <div className="bg-white p-4 overflow-hidden m-4 md:m-0 shadow-sm rounded-lg">
                         <form method="POST" onSubmit={handleSubmit} className="max-w-sm ">
                             <div className="mb-5">
                                 <label htmlFor="documento" className="block mb-2 text-lg font-medium text-gray-900">Escanear cédula</label>

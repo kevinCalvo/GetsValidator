@@ -152,7 +152,7 @@ const Reporte = ({ auth, data }) => {
 
 
             <div className="py-4">
-                <div className=' max-w-7xl mx-auto sm:px-6 lg:px-8 flex justify-between  my-3'>
+                <div className=' max-w-7xl mx-4 md:mx-auto sm:px-6 lg:px-8 flex justify-between  my-3'>
                     <a className='bg-[#C39BD3] h-9 text-sm block p-2 rounded-lg' href={route('dashboard')}>
                         Volver
                     </a>
@@ -171,16 +171,16 @@ const Reporte = ({ auth, data }) => {
 
 
                 </div>
-                <div id="pdf-content" className=" max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div id="pdf-content" className=" max-w-7xl mx-4 md:mx-auto sm:px-6 lg:px-8">
                     <header>
-                        <div class="bg-[#C39BD3] border-gray-200 h-16 px-4 sm:rounded-lg lg:px-6 py-2.5">
-                            <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+                        <div class="bg-[#C39BD3] border-gray-200 h-auto px-4 rounded-lg lg:px-6 py-2.5">
+                            <div class="flex flex-wrap  justify-between items-center mx-auto max-w-screen-xl">
                                 <a href="/">
                                     <img src="/img/r-Gets.png" className="block h-9 w-auto fill-current " />
                                 </a>
-                                <div>
-                                    <h1 className='text-sm'><span className='font-extrabold'>Reporte:</span> {nombre} - {data.defunciones_registraduria.doc} </h1>
-                                    <p className='text-sm'><span className='font-extrabold'>Fecha:</span>{data.defunciones_registraduria.date}</p>
+                                <div className='mt-2 md:mt-0'>
+                                    <h1 className='text-xs md:text-sm'><span className='font-extrabold'>Reporte:</span> {nombre} - {data.defunciones_registraduria.doc} </h1>
+                                    <p className='text-xs md:text-sm'><span className='font-extrabold'>Fecha:</span> {data.defunciones_registraduria.date}</p>
                                 </div>
 
                             </div>

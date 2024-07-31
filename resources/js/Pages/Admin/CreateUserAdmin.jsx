@@ -37,7 +37,7 @@ const CreateUserAdmin = ({ auth, users }) => {
             <div className="py-10">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 sm:w-full flex sm:flex-col md:flex-row  gap-4">
 
-                    <div className="bg-white p-4 overflow-hidden w-full shadow-sm sm:rounded-lg">
+                    <div className="bg-white mx-4 md:mx-auto p-4 overflow-hidden w-full shadow-sm rounded-lg">
                         <h1 className='text-xl mb-4 font-bold'>Registrar Usuario</h1>
                         <form className='' onSubmit={submit}>
                             <div className='flex flex-col gap-3 w-full '>
