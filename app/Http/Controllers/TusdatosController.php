@@ -27,7 +27,7 @@ class TusdatosController extends Controller
     public function antecedentes(Request $request)
     {
         $request->validate([
-            'documento' => 'required|digits_between:6,10',
+           'documento' => 'required|regex:/^[a-zA-Z0-9]{6,10}$/',
             'tipodoc' => 'required',
             'value' => 'required'
         ], [
@@ -109,12 +109,13 @@ class TusdatosController extends Controller
     return $responseData;
 }
 
-    private function launchRequest($documento, $tipodoc, $fechaExp)
+    private function launchRequest($documento, $tipodoc, $fechaExp, $name = null)
     {
         $data = [
             'doc' => $documento,
             'typedoc' => $tipodoc,
             'fechaE' => $fechaExp,
+            'name' => $name,
 
         ];
 

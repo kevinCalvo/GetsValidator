@@ -16,7 +16,7 @@ const groupByCategory = (data, categoryField) => {
 
 
 const Reporte = ({ auth, data }) => {
-    /* console.log('Data completa:', data); */
+    console.log('Data completa:', data);
 
     const { rut, runt_app, nombre, registraduria_certificado, peps, peps_consolidado, peps_denon, ofac, ofac_nombre, lista_onu, europol, interpol, procuraduria, contraloria, contaduria, defunciones_registraduria, insolvencias, policia, delitos_sexuales, rut_estado, proveedores_ficticios, juzgados_tyba, contadores_s, simit, rama, sisben, dest, libretamilitar, secop, typedoc } = data;
     const licencias = runt_app?.licencia?.licencias || [];
@@ -188,9 +188,9 @@ const Reporte = ({ auth, data }) => {
                                     <img src="/img/r-Gets.png" className="block h-9 w-auto fill-current " />
                                 </a>
                                 <div className='mt-2 md:mt-0'>
-                                    <span className='font-extrabold'>Reporte:</span> {nombre} - {(data.defunciones_registraduria && data.defunciones_registraduria.doc) || data.id}
+                                    <span className='font-extrabold text-xs md:text-sm '>Reporte:</span> {nombre} - {(data.defunciones_registraduria && data.defunciones_registraduria.doc) || data.id}
                                     <p className='text-xs md:text-sm'>
-                                        <span className='font-extrabold'>Fecha:</span>
+                                        <span className='font-extrabold'>Fecha: </span>
                                         {(data.defunciones_registraduria && data.defunciones_registraduria.date) || extractDate(data.fecha)}
                                     </p>
                                 </div>
@@ -254,6 +254,10 @@ const Reporte = ({ auth, data }) => {
                         {registraduria_certificado === "Error" ? (
                             <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
                                 La fuente de consulta presenta indisponibilidad.
+                            </div>
+                        ) : registraduria_certificado && registraduria_certificado.error === "Fecha de expedición invalida" ? (
+                            <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
+                                Fecha de expedición inválida.
                             </div>
                         ) : registraduria_certificado ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">

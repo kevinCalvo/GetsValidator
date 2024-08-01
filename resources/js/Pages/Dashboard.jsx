@@ -11,7 +11,7 @@ export default function Dashboard({ auth }) {
         tipodoc: 'CC',
         date: '',
         value: '',
-        nombre: '',
+        name: '',
         acceptedTerms: false,
     });
     const { flash } = usePage().props;
@@ -36,9 +36,17 @@ export default function Dashboard({ auth }) {
             setFormError('Debes aceptar los términos para continuar.');
             return;
         }
+        if (!data.documento) {
+            setFormError('El numero de documento es obligatoria.');
+            return;
+        }
 
         if (data.tipodoc === 'CE' && !data.date) {
             setFormError('La fecha de expedición es obligatoria para el tipo de documento CE.');
+            return;
+        }
+        if (data.tipodoc === 'PP' && !data.name) {
+            setFormError('El nombre es obligatoria para el tipo de documento PP.');
             return;
         }
         Swal.fire({
@@ -111,9 +119,10 @@ export default function Dashboard({ auth }) {
                                 <select value={data.tipodoc} id="tipodoc" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" onChange={(e) =>
                                     setData("tipodoc", e.target.value)
                                 } >
-                                    <option value='CC'> CC</option>
-                                    <option value='CE'>CE</option>
-                                    <option value='PPT'>PPT</option>
+                                    <option value='CC'>CC (Cédula de Ciudadanía)</option>
+                                    <option value='CE'>CE (Cédula de Extranjería)</option>
+                                    <option value='PP'>PP (Pasaporte)</option>
+                                    <option value='PPT'>PPT (Permiso por Protección Temporal)</option>
                                 </select>
                             </div>
                             {(data.tipodoc === 'CC' || data.tipodoc === 'CE') && (
@@ -123,6 +132,16 @@ export default function Dashboard({ auth }) {
                                     </label>
                                     <input type="date" id="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" onChange={(e) =>
                                         setData("date", e.target.value)
+                                    } />
+                                </div>
+                            )}
+                            {(data.tipodoc === 'PP') && (
+                                <div className="mb-5">
+                                    <label htmlFor="date" className="block mb-2 text-lg font-medium text-gray-900">
+                                        Nombre
+                                    </label>
+                                    <input type="text" id="name" placeholder='Ingrese el nombre' className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" onChange={(e) =>
+                                        setData("name", e.target.value)
                                     } />
                                 </div>
                             )}
