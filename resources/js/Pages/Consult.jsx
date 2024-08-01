@@ -10,6 +10,8 @@ export default function Consult({ auth, historicos }) {
     const itemsPerPage = 10;
     const totalPages = Math.ceil(historicos.length / itemsPerPage);
 
+    const reversedHistoricos = [...historicos].reverse();
+
     const next = () => {
         if (activePage < totalPages) {
             setActivePage(activePage + 1);
@@ -22,7 +24,7 @@ export default function Consult({ auth, historicos }) {
         }
     };
 
-    const paginatedHistoricos = historicos.slice(
+    const paginatedHistoricos = reversedHistoricos.slice(
         (activePage - 1) * itemsPerPage,
         activePage * itemsPerPage
     );
@@ -38,7 +40,7 @@ export default function Consult({ auth, historicos }) {
                 <div className="max-w-7xl sm:px-6 lg:px-8 mx-auto">
                     <div className="bg-white p-4 overflow-hidden mx-4 md:mx-auto shadow-sm rounded-lg">
                         <h3 className="text-lg font-semibold mb-4">Históricos</h3>
-                        {historicos.length > 0 ? (
+                        {reversedHistoricos.length > 0 ? (
                             <>
                                 <div className="overflow-x-auto">
                                     <table className="min-w-full max-w-[70%] bg-white border border-gray-200 hidden md:table">
@@ -93,13 +95,17 @@ export default function Consult({ auth, historicos }) {
                                         ))}
                                     </div>
                                 </div>
-                                <CircularPagination
-                                    activePage={activePage}
-                                    totalPages={totalPages}
-                                    onNext={next}
-                                    onPrev={prev}
-                                    onSetPage={setActivePage}
-                                />
+                                <div className="flex justify-center items-center">
+                                    <CircularPagination
+                                        activePage={activePage}
+                                        totalPages={totalPages}
+                                        onNext={next}
+                                        onPrev={prev}
+                                        onSetPage={setActivePage}
+
+                                    />
+                                </div>
+
                             </>
                         ) : (
                             <p className="text-gray-500">No hay históricos disponibles.</p>

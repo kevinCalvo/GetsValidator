@@ -37,20 +37,9 @@ class TusdatosController extends Controller
             'value.required' => 'El campo de tipo es obligatorio.'
         ]);
 
-
-
-
         $fechaExp = $request->date ? date('d/m/Y', strtotime($request->date)) : null;
 
         try {
-            $verificationResponse = $this->launchVerify($request->documento, $fechaExp);
-
-            if (!empty($verificationResponse['findings'])) {
-                $errors = implode(', ', $verificationResponse['findings']);
-
-                return redirect()->back()->withErrors([$errors]);
-            }
-
             $consult = Consult::where('doc', $request->documento)->first();
 
             if ($consult) {
@@ -59,10 +48,18 @@ class TusdatosController extends Controller
 
                 $json = $consult->report;
             } else {
+
                 $identifier = $this->launchRequest($request->documento, $request->tipodoc, $fechaExp);
                 if ($this->isFinalizedId($identifier)) {
                     $json = $this->fetchFinalReport($identifier);
                 } else {
+                    $verificationResponse = $this->launchVerify($request->documento, $fechaExp);
+
+                    if (!empty($verificationResponse['findings'])) {
+                        $errors = implode(', ', $verificationResponse['findings']);
+
+                        return redirect()->back()->withErrors([$errors]);
+                    }
                     $json = $this->fetchReportAsync($identifier);
                 }
 
@@ -97,6 +94,7 @@ class TusdatosController extends Controller
         ->post("{$this->endpoint}/launch/verify", $data);
     $responseData = $response->json();
 
+
     if ($response->failed()) {
         throw new \Exception('Error al verificar la cédula');
     }
@@ -123,6 +121,8 @@ class TusdatosController extends Controller
         }
 
         $launchData = $launch->json();
+
+    /*     dd($launchData); */
         if (!isset($launchData['jobid']) && !isset($launchData['id'])) {
             throw new \Exception('Job ID no encontrado');
         }
