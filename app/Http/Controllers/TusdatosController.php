@@ -38,6 +38,7 @@ class TusdatosController extends Controller
         ]);
 
         $fechaExp = $request->date ? date('d/m/Y', strtotime($request->date)) : null;
+        $fechaR = Carbon::now()->format('d/m/Y');
 
         try {
             $consult = Consult::where('doc', $request->documento)->first();
@@ -46,25 +47,29 @@ class TusdatosController extends Controller
                 $consult->fechaE = $fechaExp;
                 $consult->save();
 
+
                 $json = $consult->report;
             } else {
 
                 $identifier = $this->launchRequest($request->documento, $request->tipodoc, $fechaExp);
                 if ($this->isFinalizedId($identifier)) {
+
                     $json = $this->fetchFinalReport($identifier);
+
                 } else {
-                    $verificationResponse = $this->launchVerify($request->documento, $fechaExp);
+                    /* $verificationResponse = $this->launchVerify($request->documento, $fechaExp);
 
                     if (!empty($verificationResponse['findings'])) {
                         $errors = implode(', ', $verificationResponse['findings']);
 
                         return redirect()->back()->withErrors([$errors]);
-                    }
+                    } */
                     $json = $this->fetchReportAsync($identifier);
+
                 }
 
                 $nombre = $json['nombre'] ?? null;
-                $fechaR = $json['defunciones_registraduria']['date'] ?? null;
+
 
                 $consult = Consult::create([
                     'doc' => $request->documento,
@@ -122,7 +127,6 @@ class TusdatosController extends Controller
 
         $launchData = $launch->json();
 
-    /*     dd($launchData); */
         if (!isset($launchData['jobid']) && !isset($launchData['id'])) {
             throw new \Exception('Job ID no encontrado');
         }
@@ -135,6 +139,7 @@ class TusdatosController extends Controller
         $response = Http::withBasicAuth($this->correo, $this->pass)
             ->timeout(210)
             ->get("{$this->endpoint}/report_json/{$id}");
+
 
         if ($response->successful()) {
             return $response->json();
@@ -197,7 +202,6 @@ class TusdatosController extends Controller
     {
         try {
             $data = $this->getPlans();
-           /*  dd($data); */
             return Inertia::render('Admin/DashboardAdmin', $data);
         } catch (\Exception $exception) {
             return redirect()->back()->with('errorMessage', $exception->getMessage());

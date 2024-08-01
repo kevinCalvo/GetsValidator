@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('consults', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('fechaR');
+            $table->string('name')->nullable();
+            $table->string('fechaR')->nullable();
             $table->string('doc');
             $table->string('typedoc');
             $table->string('fechaE')->nullable();

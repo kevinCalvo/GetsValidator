@@ -36,6 +36,11 @@ export default function Dashboard({ auth }) {
             setFormError('Debes aceptar los términos para continuar.');
             return;
         }
+
+        if (data.tipodoc === 'CE' && !data.date) {
+            setFormError('La fecha de expedición es obligatoria para el tipo de documento CE.');
+            return;
+        }
         Swal.fire({
             imageUrl: "/img/r-Gets.png",
             title: 'Cargando...',
@@ -88,46 +93,34 @@ export default function Dashboard({ auth }) {
                 <div className="max-w-7xl mx-4 md:mx-auto sm:px-6 lg:px-8  flex gap-x-4">
                     <div className="bg-white p-4 overflow-hidden m-auto md:m-0 shadow-sm rounded-lg">
                         <form method="POST" onSubmit={handleSubmit} className="max-w-sm ">
-                            {data.tipodoc === 'NOMBRE' && (
-                                <div className="mb-5">
-                                    <label htmlFor="documento" className="block mb-2 text-lg font-medium text-gray-900">Nombre</label>
-                                    <input
-                                        type="text"
-                                        id="documento"
-                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                        placeholder="Nombre"
-                                        value={data.documento}
-                                        onChange={(e) => setData("documento", e.target.value)}
-                                    />
-                                </div>
-                            )}
+                            <div className="mb-5">
+                                <label htmlFor="documento" className="block mb-2 text-lg font-medium text-gray-900">Documento a Consultar</label>
+                                <input
+                                    type="text"
+                                    id="documento"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                    placeholder="Ingrese el numero de documento"
+                                    value={data.documento}
+                                    onChange={(e) => setData("documento", e.target.value)}
+                                />
+                            </div>
 
-                            {data.tipodoc === 'CC' && (
-                                <div className="mb-5">
-                                    <label htmlFor="documento" className="block mb-2 text-lg font-medium text-gray-900">Número de cédula</label>
-                                    <input
-                                        type="text"
-                                        id="documento"
-                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                        placeholder="Número de cédula"
-                                        value={data.documento}
-                                        onChange={(e) => setData("documento", e.target.value)}
-                                    />
-                                </div>
-                            )}
 
                             <div className='mb-5'>
                                 <label htmlFor="tipodoc" className="block mb-2 text-lg font-medium text-gray-900">Tipo de documento</label>
                                 <select value={data.tipodoc} id="tipodoc" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" onChange={(e) =>
                                     setData("tipodoc", e.target.value)
                                 } >
-                                    <option value='CC'>CC</option>
-                                    {/*   <option value='NOMBRE'>NOMBRE</option> */}
+                                    <option value='CC'> CC</option>
+                                    <option value='CE'>CE</option>
+                                    <option value='PPT'>PPT</option>
                                 </select>
                             </div>
-                            {data.tipodoc === 'CC' && (
+                            {(data.tipodoc === 'CC' || data.tipodoc === 'CE') && (
                                 <div className="mb-5">
-                                    <label htmlFor="date" className="block mb-2 text-lg font-medium text-gray-900">Fecha de expedición (Opcional) </label>
+                                    <label htmlFor="date" className="block mb-2 text-lg font-medium text-gray-900">
+                                        Fecha de expedición {data.tipodoc === 'CE' ? '(Obligatoria)' : '(Opcional)'}
+                                    </label>
                                     <input type="date" id="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" onChange={(e) =>
                                         setData("date", e.target.value)
                                     } />
@@ -155,11 +148,9 @@ export default function Dashboard({ auth }) {
                                 {formError && <p className="text-red-500 text-sm">{formError}</p>}
 
                             </div>
-
                             <button type="submit" className="text-white bg-[#9c60b4] hover:bg-[#C39BD3] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Generar reporte</button>
                         </form>
                     </div>
-
                 </div>
             </div>
         </AuthenticatedLayout>

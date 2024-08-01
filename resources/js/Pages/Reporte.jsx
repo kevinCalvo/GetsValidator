@@ -16,9 +16,9 @@ const groupByCategory = (data, categoryField) => {
 
 
 const Reporte = ({ auth, data }) => {
-    /*   console.log('Data completa:', data); */
+    /* console.log('Data completa:', data); */
 
-    const { rut, runt_app, nombre, registraduria_certificado, peps, peps_consolidado, peps_denon, ofac, ofac_nombre, lista_onu, europol, interpol, procuraduria, contraloria, contaduria, defunciones_registraduria, insolvencias, policia, delitos_sexuales, rut_estado, proveedores_ficticios, juzgados_tyba, contadores_s, simit, rama, sisben, dest, libretamilitar, secop } = data;
+    const { rut, runt_app, nombre, registraduria_certificado, peps, peps_consolidado, peps_denon, ofac, ofac_nombre, lista_onu, europol, interpol, procuraduria, contraloria, contaduria, defunciones_registraduria, insolvencias, policia, delitos_sexuales, rut_estado, proveedores_ficticios, juzgados_tyba, contadores_s, simit, rama, sisben, dest, libretamilitar, secop, typedoc } = data;
     const licencias = runt_app?.licencia?.licencias || [];
     const totalLicencias = runt_app?.licencia?.totalLicencias || 0;
 
@@ -114,6 +114,15 @@ const Reporte = ({ auth, data }) => {
 
         });
     };
+    const extractDate = (dateString) => {
+
+        const match = dateString.match(/(\d{2}, \w{3} \d{4})/);
+        if (match) {
+            const date = new Date(match[0]);
+            return date.toLocaleDateString();
+        }
+        return "Fecha no disponible";
+    };
     const printDocument = () => {
         window.print();
     };
@@ -179,8 +188,11 @@ const Reporte = ({ auth, data }) => {
                                     <img src="/img/r-Gets.png" className="block h-9 w-auto fill-current " />
                                 </a>
                                 <div className='mt-2 md:mt-0'>
-                                    <h1 className='text-xs md:text-sm'><span className='font-extrabold'>Reporte:</span> {nombre} - {data.defunciones_registraduria.doc} </h1>
-                                    <p className='text-xs md:text-sm'><span className='font-extrabold'>Fecha:</span> {data.defunciones_registraduria.date}</p>
+                                    <span className='font-extrabold'>Reporte:</span> {nombre} - {(data.defunciones_registraduria && data.defunciones_registraduria.doc) || data.id}
+                                    <p className='text-xs md:text-sm'>
+                                        <span className='font-extrabold'>Fecha:</span>
+                                        {(data.defunciones_registraduria && data.defunciones_registraduria.date) || extractDate(data.fecha)}
+                                    </p>
                                 </div>
 
                             </div>
@@ -193,8 +205,8 @@ const Reporte = ({ auth, data }) => {
 
                         <div className="grid grid-cols-1  md:grid-cols-4  lg:grid-cols-7 gap-4 mb-5">
                             <div className="flex gap-2 flex-col">
-                                <p className="font-semibold">Cédula:</p>
-                                <p>{data.defunciones_registraduria.doc}</p>
+                                <p className="font-semibold">{typedoc}:</p>
+                                {(data.defunciones_registraduria && data.defunciones_registraduria.doc) || data.id}
                             </div>
                             {data.Estado && (
                                 <div className="flex gap-2 flex-col">
@@ -204,11 +216,11 @@ const Reporte = ({ auth, data }) => {
                             )}
                             <div className="flex gap-2 flex-col">
                                 <p className='font-semibold'>RUT:</p>
-                                <p>{rut}</p>
+                                <p>{rut ? rut : 'No encontrado'}</p>
                             </div>
                             <div className="flex gap-2 flex-col">
                                 <p className='font-semibold'>RUT Estado:</p>
-                                <p>{data.rut_estado}</p>
+                                <p>{data.rut_estado ? data.rut_estado : 'No encontrado'}</p>
                             </div>
                             <div className="flex gap-2 flex-col">
                                 <p className='font-semibold'>Género:</p>
@@ -231,43 +243,51 @@ const Reporte = ({ auth, data }) => {
                             </div>
                             <div className="flex gap-2 flex-col">
                                 <p className='font-semibold'>Fecha del reporte:</p>
-                                <p>{data.defunciones_registraduria.date}</p>
+                                <p>{(data.defunciones_registraduria && data.defunciones_registraduria.date) || extractDate(data.fecha)}</p>
                             </div>
                         </div>
                     </div>
 
-                    {registraduria_certificado && (
-                        <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
-                            <p className="text-xl font-semibold mb-5">Registraduría Nacional del Estado Civil</p>
-                            <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
+
+                    <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
+                        <p className="text-xl font-semibold mb-5">Registraduría Nacional del Estado Civil</p>
+                        {registraduria_certificado === "Error" ? (
+                            <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
+                                La fuente de consulta presenta indisponibilidad.
+                            </div>
+                        ) : registraduria_certificado ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
                                 <div className="flex gap-2 flex-col">
                                     <p className="font-semibold">Cédula:</p>
                                     <p>{registraduria_certificado.cedula}</p>
                                 </div>
                                 <div className="flex gap-2 flex-col">
-                                    <p className='font-semibold'>Fecha de Expedición:</p>
+                                    <p className="font-semibold">Fecha de Expedición:</p>
                                     <p>{registraduria_certificado.fecha_exp}</p>
                                 </div>
                                 <div className="flex gap-2 flex-col">
-                                    <p className='font-semibold'>Lugar de Expedición:</p>
+                                    <p className="font-semibold">Lugar de Expedición:</p>
                                     <p>{registraduria_certificado.lugar_exp}</p>
                                 </div>
                                 <div className="flex gap-2 flex-col">
-                                    <p className='font-semibold'>Nombre:</p>
+                                    <p className="font-semibold">Nombre:</p>
                                     <p>{registraduria_certificado.nombre}</p>
                                 </div>
                                 <div className="flex gap-2 flex-col">
-                                    <p className='font-semibold'>Estado:</p>
+                                    <p className="font-semibold">Estado:</p>
                                     <p>{registraduria_certificado.estado}</p>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        ) : (
+                            <p className='text-gray-500'>No se encontró registros.</p>
+                        )}
+                    </div>
+
                     {groupedPeps && (
                         <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                             <p className="text-xl font-semibold mb-5">Listas y Personas Expuestas Políticamente (PEPs)</p>
                             {Object.keys(groupedPeps).length === 0 ? (
-                                <p>No se encontraron registros.</p>
+                                <p className='text-gray-500'>No se encontraron registros.</p>
                             ) : (
                                 Object.entries(groupedPeps).map(([category, items]) => (
                                     <div key={category} className="mb-4">
@@ -439,7 +459,7 @@ const Reporte = ({ auth, data }) => {
                                 </div>
                                 <div className="flex gap-2 flex-col">
                                     <p className='font-semibold'>Fecha de consulta:</p>
-                                    <p>{defunciones_registraduria.date}</p>
+                                    {/* <p>{defunciones_registraduria.date}</p> */}
                                 </div>
                                 <div className="flex gap-2 flex-col">
                                     <p className='font-semibold'>Estado</p>
@@ -521,10 +541,10 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     </div>
 
-                    <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
+                    <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">Juzgados Tyba - Justicia XXI</p>
                         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mb-5">
-                            {juzgados_tyba.length === 0 ? (
+                            {(!Array.isArray(juzgados_tyba) || juzgados_tyba.length === 0) ? (
                                 <p className='text-gray-500'>No registra en la fuente</p>
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
@@ -532,32 +552,36 @@ const Reporte = ({ auth, data }) => {
                                         <div key={index} className="flex flex-col gap-4 p-4 border border-gray-200 rounded-lg">
                                             {/* Información básica del proceso */}
                                             <div className="space-y-2">
-                                                <p><strong>Clase Proceso:</strong> {item["CLASE PROCESO"]}</p>
-                                                <p><strong>Código Proceso:</strong> {item["CODIGO PROCESO"]}</p>
-                                                <p><strong>Despacho:</strong> {item["DESPACHO"]}</p>
+                                                <p><strong>Clase Proceso:</strong> {item["CLASE PROCESO"] || "No disponible"}</p>
+                                                <p><strong>Código Proceso:</strong> {item["CODIGO PROCESO"] || "No disponible"}</p>
+                                                <p><strong>Despacho:</strong> {item["DESPACHO"] || "No disponible"}</p>
                                                 <p><strong>Proceso Privado:</strong> {item["proceso_privado"] ? "Sí" : "No"}</p>
                                             </div>
 
                                             {/* Información adicional si existe */}
-                                            {item["INFO PROCES0"] && (
+                                            {item["INFO PROCES0"] && typeof item["INFO PROCES0"] === 'object' && (
                                                 <div className="mt-4 border-t pt-4">
                                                     <p className="font-semibold text-lg">Información Adicional:</p>
 
                                                     {/* Información general */}
                                                     {Object.entries(item["INFO PROCES0"]).map(([key, value], idx) => (
                                                         key !== 'actuaciones' && key !== 'sujetos' ? (
-                                                            <p key={idx} className="flex items-center"><strong className="w-48 text-gray-700">{key}:</strong> {value || "No disponible"}</p>
+                                                            <p key={idx} className="flex items-center">
+                                                                <strong className="w-48 text-gray-700">{key}:</strong> {value || "No disponible"}
+                                                            </p>
                                                         ) : null
                                                     ))}
 
                                                     {/* Actuaciones */}
-                                                    {item["INFO PROCES0"]["actuaciones"] && item["INFO PROCES0"]["actuaciones"].length > 0 && (
+                                                    {item["INFO PROCES0"]["actuaciones"] && Array.isArray(item["INFO PROCES0"]["actuaciones"]) && item["INFO PROCES0"]["actuaciones"].length > 0 && (
                                                         <div className="mt-4">
                                                             <p className="font-semibold text-lg">Actuaciones:</p>
                                                             {item["INFO PROCES0"]["actuaciones"].map((actuacion, actIndex) => (
                                                                 <div key={actIndex} className="border-t pt-2">
                                                                     {Object.entries(actuacion).map(([key, value], idx) => (
-                                                                        <p key={idx} className="flex items-center"><strong className="w-48 text-gray-700">{key}:</strong> {value || "No disponible"}</p>
+                                                                        <p key={idx} className="flex items-center">
+                                                                            <strong className="w-48 text-gray-700">{key}:</strong> {value || "No disponible"}
+                                                                        </p>
                                                                     ))}
                                                                 </div>
                                                             ))}
@@ -565,13 +589,15 @@ const Reporte = ({ auth, data }) => {
                                                     )}
 
                                                     {/* Sujetos */}
-                                                    {item["INFO PROCES0"]["sujetos"] && item["INFO PROCES0"]["sujetos"].length > 0 && (
+                                                    {item["INFO PROCES0"]["sujetos"] && Array.isArray(item["INFO PROCES0"]["sujetos"]) && item["INFO PROCES0"]["sujetos"].length > 0 && (
                                                         <div className="mt-4">
                                                             <p className="font-semibold text-lg">Sujetos:</p>
                                                             {item["INFO PROCES0"]["sujetos"].map((sujeto, subjIndex) => (
                                                                 <div key={subjIndex} className="border-t pt-2">
                                                                     {Object.entries(sujeto).map(([key, value], idx) => (
-                                                                        <p key={idx} className="flex items-center"><strong className="w-48 text-gray-700">{key}:</strong> {value || "No disponible"}</p>
+                                                                        <p key={idx} className="flex items-center">
+                                                                            <strong className="w-48 text-gray-700">{key}:</strong> {value || "No disponible"}
+                                                                        </p>
                                                                     ))}
                                                                 </div>
                                                             ))}
@@ -656,17 +682,15 @@ const Reporte = ({ auth, data }) => {
                         )}
                     </div>
                     <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
-                        <p className="text-xl font-semibold mb-5">Contadores sancionados
-                        </p>
-                        <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-1 gap-4 mb-5">
-                            {contadores_s.length === 0 ? (
+                        <p className="text-xl font-semibold mb-5">Contadores sancionados</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mb-5">
+                            {Array.isArray(contadores_s) && contadores_s.length === 0 ? (
                                 <p className='text-gray-500'>No registra en la fuente</p>
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-5">
-                                    {contadores_s.map((item, index) => (
+                                    {Array.isArray(contadores_s) && contadores_s.map((item, index) => (
                                         <div key={index} className="flex gap-2 flex-col">
-                                            <p>{item}</p>
-
+                                            <p>{item || "No disponible"}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -674,15 +698,19 @@ const Reporte = ({ auth, data }) => {
                         </div>
                     </div>
 
-                    <div className="bg-white overflow-hidden sm:rounded-lg p-6">
+                    <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">Información de Ramas</p>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mb-5">
-                            {Object.entries(rama).map(([cityKey, details], index) => (
-                                <div key={index} className="p-4 border border-gray-200 rounded-lg mb-4">
-                                    <h3 className="text-lg font-semibold mb-4">{cityKey.replace(/jepms$/, '')}</h3>
-                                    {renderCityData(details)}
-                                </div>
-                            ))}
+                            {rama && typeof rama === 'object' && Object.keys(rama).length > 0 ? (
+                                Object.entries(rama).map(([cityKey, details], index) => (
+                                    <div key={index} className="p-4 border border-gray-200 rounded-lg mb-4">
+                                        <h3 className="text-lg font-semibold mb-4">{cityKey.replace(/jepms$/, '')}</h3>
+                                        {renderCityData(details)}
+                                    </div>
+                                ))
+                            ) : (
+                                <p className='text-gray-500'>No hay información disponible</p>
+                            )}
                         </div>
                     </div>
 
