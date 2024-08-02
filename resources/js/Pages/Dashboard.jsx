@@ -49,6 +49,7 @@ export default function Dashboard({ auth }) {
             setFormError('El nombre es obligatoria para el tipo de documento PP.');
             return;
         }
+
         Swal.fire({
             imageUrl: "/img/r-Gets.png",
             title: 'Cargando...',

@@ -475,17 +475,19 @@ const Reporte = ({ auth, data }) => {
                     )}
                     {insolvencias && (
                         <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
-                            <p className="text-xl font-semibold mb-5"> Insolvencias Supersociedades
-                            </p>
-                            <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
+                            <p className="text-xl font-semibold mb-5">Insolvencias Supersociedades</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
                                 {insolvencias.length === 0 ? (
                                     <p className='text-gray-500'>No registra en la fuente</p>
                                 ) : (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
+                                    <div className="space-y-4">
                                         {insolvencias.map((item, index) => (
-                                            <div key={index} className="flex gap-2 flex-col">
-                                                <p>{item}</p>
-
+                                            <div key={index} className="bg-gray-100 p-4 rounded-lg shadow-sm">
+                                                <h3 className="text-lg font-semibold mb-2">{item.CIUDAD}</h3>
+                                                <p><strong>Año de Apertura:</strong> {item.ANO_APERTURA}</p>
+                                                <p><strong>Activos:</strong> {item.ACTIVOS.toLocaleString()}</p>
+                                                <p><strong>Categoría:</strong> {item.CATEGORIA}</p>
+                                                <p><strong>CIIU:</strong> {item.CIIU}</p>
                                             </div>
                                         ))}
                                     </div>
@@ -493,7 +495,6 @@ const Reporte = ({ auth, data }) => {
                             </div>
                         </div>
                     )}
-
                     <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">Policía Nacional de Colombia
                         </p>
@@ -974,7 +975,11 @@ const Reporte = ({ auth, data }) => {
                                     <img
                                         src={`https://static.tusdatos.co/${dest}/ofac_nombre.jpg`}
                                         alt="Imagen"
-                                        className="   mt-2"
+                                        className="mt-2"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.parentElement.innerHTML = '<p class="text-gray-500">Fuente no encontrada</p>';
+                                        }}
                                     />
                                 </div>
                             </div>

@@ -40,6 +40,8 @@ class TusdatosController extends Controller
         $fechaExp = $request->date ? date('d/m/Y', strtotime($request->date)) : null;
         $fechaR = Carbon::now()->format('d/m/Y');
 
+        $name = ($request->tipodoc === 'PP') ? $request->name : null;
+
         try {
             $consult = Consult::where('doc', $request->documento)->first();
 
@@ -51,7 +53,7 @@ class TusdatosController extends Controller
                 $json = $consult->report;
             } else {
 
-                $identifier = $this->launchRequest($request->documento, $request->tipodoc, $fechaExp,$request->name);
+                $identifier = $this->launchRequest($request->documento, $request->tipodoc, $fechaExp,$name);
                 if ($this->isFinalizedId($identifier)) {
 
                     $json = $this->fetchFinalReport($identifier);
@@ -109,32 +111,36 @@ class TusdatosController extends Controller
     return $responseData;
 }
 
-    private function launchRequest($documento, $tipodoc, $fechaExp, $name)
-    {
-        $data = [
-            'doc' => $documento,
-            'typedoc' => $tipodoc,
-            'fechaE' => $fechaExp,
-            'name' => $name,
+private function launchRequest($documento, $tipodoc, $fechaExp, $name)
+{
+    $data = [
+        'doc' => $documento,
+        'typedoc' => $tipodoc,
+        'fechaE' => $fechaExp
+    ];
 
-        ];
-
-        $launch = Http::withBasicAuth($this->correo, $this->pass)
-            ->post("{$this->endpoint}/launch/", $data);
-
-        if ($launch->failed()) {
-            throw new \Exception('Error al lanzar la solicitud');
-        }
-
-        $launchData = $launch->json();
-
-
-        if (!isset($launchData['jobid']) && !isset($launchData['id'])) {
-            throw new \Exception('Job ID no encontrado');
-        }
-
-        return $launchData['jobid'] ?? $launchData['id'];
+    if ($tipodoc === 'PP') {
+        $data['name'] = $name;
     }
+
+    $response = Http::withBasicAuth($this->correo, $this->pass)
+        ->post("{$this->endpoint}/launch/", $data);
+
+    if ($response->failed()) {
+        throw new \Exception('Error al lanzar la solicitud para el tipo de documento: ' . $tipodoc);
+    }
+
+    $launchData = $response->json();
+
+    if (!isset($launchData['jobid']) && !isset($launchData['id'])) {
+        throw new \Exception('Job ID no encontrado');
+    }
+
+    return $launchData['jobid'] ?? $launchData['id'];
+}
+
+
+
 
     private function fetchFinalReport($id)
     {
