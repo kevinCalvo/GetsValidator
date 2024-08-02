@@ -51,7 +51,7 @@ class TusdatosController extends Controller
                 $json = $consult->report;
             } else {
 
-                $identifier = $this->launchRequest($request->documento, $request->tipodoc, $fechaExp);
+                $identifier = $this->launchRequest($request->documento, $request->tipodoc, $fechaExp,$request->name);
                 if ($this->isFinalizedId($identifier)) {
 
                     $json = $this->fetchFinalReport($identifier);
@@ -109,7 +109,7 @@ class TusdatosController extends Controller
     return $responseData;
 }
 
-    private function launchRequest($documento, $tipodoc, $fechaExp, $name = null)
+    private function launchRequest($documento, $tipodoc, $fechaExp, $name)
     {
         $data = [
             'doc' => $documento,
@@ -127,6 +127,7 @@ class TusdatosController extends Controller
         }
 
         $launchData = $launch->json();
+
 
         if (!isset($launchData['jobid']) && !isset($launchData['id'])) {
             throw new \Exception('Job ID no encontrado');

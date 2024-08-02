@@ -18,7 +18,7 @@ const groupByCategory = (data, categoryField) => {
 const Reporte = ({ auth, data }) => {
     console.log('Data completa:', data);
 
-    const { rut, runt_app, nombre, registraduria_certificado, peps, peps_consolidado, peps_denon, ofac, ofac_nombre, lista_onu, europol, interpol, procuraduria, contraloria, contaduria, defunciones_registraduria, insolvencias, policia, delitos_sexuales, rut_estado, proveedores_ficticios, juzgados_tyba, contadores_s, simit, rama, sisben, dest, libretamilitar, secop, typedoc } = data;
+    const { rut, runt_app, nombre, registraduria_certificado, peps, peps_consolidado, peps_denon, ofac, ofac_nombre, lista_onu, europol, interpol, procuraduria, contraloria, contaduria, defunciones_registraduria, insolvencias, policia, delitos_sexuales, rut_estado, proveedores_ficticios, juzgados_tyba, contadores_s, simit, rama, sisben, dest, libretamilitar, secop, typedoc, inpec } = data;
     const licencias = runt_app?.licencia?.licencias || [];
     const totalLicencias = runt_app?.licencia?.totalLicencias || 0;
 
@@ -618,8 +618,12 @@ const Reporte = ({ auth, data }) => {
 
                     <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">Información SIMIT</p>
-                        {/* Verifica si `simit` tiene un error */}
-                        {simit && simit === 'Error' ? (
+                        {/* Verifica si `simit` es null o undefined */}
+                        {!simit ? (
+                            <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
+                                No se encontró información SIMIT.
+                            </div>
+                        ) : simit === 'Error' ? (
                             <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
                                 La fuente de consulta presenta indisponibilidad.
                             </div>
@@ -687,19 +691,19 @@ const Reporte = ({ auth, data }) => {
                     </div>
                     <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
                         <p className="text-xl font-semibold mb-5">Contadores sancionados</p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mb-5">
-                            {Array.isArray(contadores_s) && contadores_s.length === 0 ? (
-                                <p className='text-gray-500'>No registra en la fuente</p>
-                            ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-5">
-                                    {Array.isArray(contadores_s) && contadores_s.map((item, index) => (
-                                        <div key={index} className="flex gap-2 flex-col">
-                                            <p>{item || "No disponible"}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+                        {!contadores_s ? (
+                            <p className='text-gray-500'>No se encontró la fuente</p>
+                        ) : Array.isArray(contadores_s) && contadores_s.length === 0 ? (
+                            <p className='text-gray-500'>No registra en la fuente</p>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-5">
+                                {Array.isArray(contadores_s) && contadores_s.map((item, index) => (
+                                    <div key={index} className="flex gap-2 flex-col">
+                                        <p>{item || "No disponible"}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
@@ -877,37 +881,82 @@ const Reporte = ({ auth, data }) => {
 
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-2xl font-semibold mb-5">Evidencias</p>
-                                <p className="text-2xl font-semibold mb-5">Antecedentes Juduciales</p>
-                                <div className='flex justify-center items-center'>
-                                    <img
-                                        src={`https://static.tusdatos.co/${dest}/policia.jpg`}
-                                        alt="Imagen"
-                                        className="w-[70%]   mt-2"
-                                    />
-                                </div>
-
+                                <p className="text-2xl font-semibold mb-5">Antecedentes Judiciales</p>
+                                {policia === "Error" ? (
+                                    <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
+                                        La fuente de consulta presenta indisponibilidad.
+                                    </div>
+                                ) : policia ? (
+                                    <div className='flex justify-center items-center'>
+                                        <img
+                                            src={`https://static.tusdatos.co/${dest}/policia.jpg`}
+                                            alt="Imagen"
+                                            className="w-[70%] mt-2"
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                                const parentDiv = e.target.parentElement;
+                                                const errorMessage = document.createElement('p');
+                                                errorMessage.className = 'text-gray-500';
+                                                errorMessage.textContent = 'Fuente no encontrada';
+                                                parentDiv.appendChild(errorMessage);
+                                            }}
+                                        />
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-500">No registra en la fuente</p>
+                                )}
                             </div>
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-2xl font-semibold mb-5">Instituto Nacional Penitenciario y Carcelario (INPEC)</p>
-                                <div className='flex justify-center items-center'>
-                                    <img
-                                        src={`https://static.tusdatos.co/${dest}/inpec.jpg`}
-                                        alt="Imagen"
-                                        className="w-[70%]   mt-2"
-                                    />
-                                </div>
-
+                                {inpec === "Error" ? (
+                                    <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
+                                        La fuente de consulta presenta indisponibilidad.
+                                    </div>
+                                ) : inpec ? (
+                                    <div className='flex justify-center items-center'>
+                                        <img
+                                            src={`https://static.tusdatos.co/${dest}/inpec.jpg`}
+                                            alt="Imagen"
+                                            className="w-[70%] mt-2"
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                                const parentDiv = e.target.parentElement;
+                                                const errorMessage = document.createElement('p');
+                                                errorMessage.className = 'text-gray-500';
+                                                errorMessage.textContent = 'Fuente no encontrada';
+                                                parentDiv.appendChild(errorMessage);
+                                            }}
+                                        />
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-500">No registra en la fuente</p>
+                                )}
                             </div>
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-2xl font-semibold mb-5">Procuraduría General de la Nación (Consulta en Línea)</p>
-                                <div className='flex justify-center items-center'>
-                                    <img
-                                        src={`https://static.tusdatos.co/${dest}/procuraduria.jpg`}
-                                        alt="Imagen"
-                                        className="w-[70%]   mt-2"
-                                    />
-                                </div>
-
+                                {procuraduria === "Error" ? (
+                                    <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
+                                        La fuente de consulta presenta indisponibilidad.
+                                    </div>
+                                ) : procuraduria ? (
+                                    <div className='flex justify-center items-center'>
+                                        <img
+                                            src={`https://static.tusdatos.co/${dest}/procuraduria.jpg`}
+                                            alt="Imagen"
+                                            className="w-[70%] mt-2"
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                                const parentDiv = e.target.parentElement;
+                                                const errorMessage = document.createElement('p');
+                                                errorMessage.className = 'text-gray-500';
+                                                errorMessage.textContent = 'Fuente no encontrada';
+                                                parentDiv.appendChild(errorMessage);
+                                            }}
+                                        />
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-500">No registra en la fuente</p>
+                                )}
                             </div>
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-2xl font-semibold mb-5">Lista Clinton (OFAC), Búsqueda por Documento</p>
@@ -971,13 +1020,25 @@ const Reporte = ({ auth, data }) => {
                             </div>
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-2xl font-semibold mb-5">Libreta militar</p>
-                                <div className='flex justify-center items-center'>
-                                    <img
-                                        src={`https://static.tusdatos.co/${dest}/libretamilitar.jpg`}
-                                        alt="Imagen"
-                                        className="   mt-2"
-                                    />
-                                </div>
+                                {libretamilitar === "Error" ? (
+                                    <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
+                                        La fuente de consulta presenta indisponibilidad.
+                                    </div>
+                                ) : libretamilitar ? (
+                                    <div className='flex justify-center items-center'>
+                                        <img
+                                            src={`https://static.tusdatos.co/${dest}/libretamilitar.jpg`}
+                                            alt="Imagen"
+                                            className="mt-2"
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                                e.target.parentElement.innerHTML = '<p class="text-gray-500">Fuente no encontrada</p>';
+                                            }}
+                                        />
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-500">No registra en la fuente</p>
+                                )}
                             </div>
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-2xl font-semibold mb-5">Juzgados Tyba - Justicia XXI</p>
@@ -985,7 +1046,11 @@ const Reporte = ({ auth, data }) => {
                                     <img
                                         src={`https://static.tusdatos.co/${dest}/tyba.jpg`}
                                         alt="Imagen"
-                                        className="   mt-2"
+                                        className="mt-2"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.parentElement.innerHTML = '<p class="text-gray-500">Fuente no encontrada</p>';
+                                        }}
                                     />
                                 </div>
                             </div>
@@ -993,18 +1058,31 @@ const Reporte = ({ auth, data }) => {
                                 <p className="text-2xl font-semibold mb-5">
                                     Juzgados de Ejecución de Penas y Medidas de Seguridad (JEPMS)
                                 </p>
-                                <div className="flex justify-center flex-col items-center">
-                                    {cities.map((city) => (
-                                        <div key={city} className="flex justify-center items-center flex-col mb-4">
-                                            <p className="text-2xl font-semibold mb-2">{city.charAt(0).toUpperCase() + city.slice(1)}</p>
-                                            <img
-                                                src={`https://static.tusdatos.co/${dest}/${city}jepms.jpg`}
-                                                alt={`Imagen de ${city}`}
-                                                className="mt-2"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
+                                {cities.length === 0 ? (
+                                    <p className="text-gray-500">No hay datos disponibles</p>
+                                ) : (
+                                    <div className="flex justify-center flex-col items-center">
+                                        {cities.map((city) => (
+                                            <div key={city} className="flex justify-center items-center flex-col mb-4">
+                                                <p className="text-2xl font-semibold mb-2">{city.charAt(0).toUpperCase() + city.slice(1)}</p>
+                                                <div className="relative">
+                                                    <img
+                                                        src={`https://static.tusdatos.co/${dest}/${city}jepms.jpg`}
+                                                        alt={`Imagen de ${city}`}
+                                                        className="mt-2"
+                                                        onError={(e) => {
+                                                            e.target.style.display = 'none';
+                                                            const fallbackText = document.createElement('p');
+                                                            fallbackText.textContent = 'Fuente no encontrada';
+                                                            fallbackText.className = 'text-gray-500 mt-2';
+                                                            e.target.parentNode.appendChild(fallbackText);
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-2xl font-semibold mb-5">Contaduría General de la Nación</p>
@@ -1018,6 +1096,10 @@ const Reporte = ({ auth, data }) => {
                                             src={`https://static.tusdatos.co/${dest}/contaduria.jpg`}
                                             alt="Imagen"
                                             className="mt-2"
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                                e.target.parentElement.innerHTML = '<p class="text-gray-500 text-left">Fuente no encontrada</p>';
+                                            }}
                                         />
                                     </div>
                                 )}
@@ -1034,13 +1116,21 @@ const Reporte = ({ auth, data }) => {
                             </div>
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-2xl font-semibold mb-5">Defunciones Registraduria</p>
-                                <div className='flex justify-center items-center'>
-                                    <img
-                                        src={`https://static.tusdatos.co/${dest}/defunciones_registraduria.jpg`}
-                                        alt="Imagen"
-                                        className="   mt-2"
-                                    />
-                                </div>
+                                {defunciones_registraduria === "Error" ? (
+                                    <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
+                                        La fuente de consulta presenta indisponibilidad.
+                                    </div>
+                                ) : defunciones_registraduria ? (
+                                    <div className='flex justify-center items-center'>
+                                        <img
+                                            src={`https://static.tusdatos.co/${dest}/defunciones_registraduria.jpg`}
+                                            alt="Imagen"
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-500">No registra en la fuente</p>
+                                )}
                             </div>
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-2xl font-semibold mb-5">Sistema Integrado de Multas y Sanciones de Tránsito (SIMIT)</p>
@@ -1048,7 +1138,7 @@ const Reporte = ({ auth, data }) => {
                                     <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
                                         La fuente de consulta presenta indisponibilidad.
                                     </div>
-                                ) : (
+                                ) : simit ? (
                                     <div className='flex justify-center items-center'>
                                         <img
                                             src={`https://static.tusdatos.co/${dest}/simit.jpg`}
@@ -1056,17 +1146,27 @@ const Reporte = ({ auth, data }) => {
                                             className="mt-2"
                                         />
                                     </div>
+                                ) : (
+                                    <p className="text-gray-500">No registra en la fuente</p>
                                 )}
                             </div>
                             <div className="bg-white overflow-hidden shadow-sm mt-4 sm:rounded-lg p-6">
                                 <p className="text-2xl font-semibold mb-5">RUT (Registro Único Tributario)</p>
-                                <div className='flex justify-center items-center'>
-                                    <img
-                                        src={`https://static.tusdatos.co/${dest}/rut.jpg`}
-                                        alt="Imagen"
-                                        className="   mt-2"
-                                    />
-                                </div>
+                                {rut === "Error" ? (
+                                    <div className="p-4 border border-red-300 rounded-lg bg-red-50 text-red-600">
+                                        La fuente de consulta presenta indisponibilidad.
+                                    </div>
+                                ) : rut ? (
+                                    <div className='flex justify-center items-center'>
+                                        <img
+                                            src={`https://static.tusdatos.co/${dest}/rut.jpg`}
+                                            alt="Imagen"
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-500">No registra en la fuente</p>
+                                )}
                             </div>
                         </div>
 
