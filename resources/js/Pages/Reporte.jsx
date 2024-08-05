@@ -18,7 +18,7 @@ const groupByCategory = (data, categoryField) => {
 const Reporte = ({ auth, data }) => {
     console.log('Data completa:', data);
 
-    const { rut, runt_app, nombre, registraduria_certificado, peps, peps_consolidado, peps_denon, ofac, ofac_nombre, lista_onu, europol, interpol, procuraduria, contraloria, contaduria, defunciones_registraduria, insolvencias, policia, delitos_sexuales, rut_estado, proveedores_ficticios, juzgados_tyba, contadores_s, simit, rama, sisben, dest, libretamilitar, secop, typedoc, inpec } = data;
+    const { rut, runt_app, nombre, registraduria_certificado, peps, peps_consolidado, peps_denon, ofac, ofac_nombre, lista_onu, europol, interpol, procuraduria, contraloria, contaduria, defunciones_registraduria, insolvencias, policia, delitos_sexuales, rut_estado, proveedores_ficticios, juzgados_tyba, contadores_s, simit, rama, sisben, dest, libretamilitar, secop, typedoc, inpec, contraloria2 } = data;
     const licencias = runt_app?.licencia?.licencias || [];
     const totalLicencias = runt_app?.licencia?.totalLicencias || 0;
 
@@ -423,14 +423,29 @@ const Reporte = ({ auth, data }) => {
                         <p className="text-gray-500 mt-4">No encontrado</p>
                     )}
                     {contraloria && (
-                        <div className="bg-white overflow-hidden  mt-4 sm:rounded-lg p-6">
-                            <p className="text-xl font-semibold mb-5">Contraloría General de la República (Consulta en Línea)
-                            </p>
-                            <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-5 gap-4 mb-5">
-                                <div className="flex gap-2 flex-col">
-                                    <p className="text-gray-500">{contraloria ? contraloria : "No registra en la fuente"}</p>
-                                </div>
-
+                        <div className="bg-white overflow-hidden mt-4 sm:rounded-lg p-6">
+                            <p className="text-xl font-semibold mb-5">Contraloría General de la República (Consulta en Línea)</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
+                                {contraloria2.length > 0 ? (
+                                    contraloria2.map((item, index) => (
+                                        <div key={index} className="flex gap-2 flex-col">
+                                            <p><span className="font-semibold">Código de Verificación:</span> {item.codigo_verificacion}</p>
+                                            <p><span className="font-semibold">Cuantía:</span> {item.cuantia}</p>
+                                            <p><span className="font-semibold">Departamento:</span> {item.departamento}</p>
+                                            <p><span className="font-semibold">Entidad Afectada:</span> {item.entidad_afectada}</p>
+                                            <p><span className="font-semibold">Fallo:</span> {item.fallo}</p>
+                                            <p><span className="font-semibold">Fecha Fallo:</span> {item.fecha_fallo}</p>
+                                            <p><span className="font-semibold">Identificación:</span> {item.identificacion}</p>
+                                            <p><span className="font-semibold">Municipio:</span> {item.municipio}</p>
+                                            <p><span className="font-semibold">Nombre:</span> {item.nombre}</p>
+                                            <p><span className="font-semibold">Reportado por:</span> {item.reportado_por}</p>
+                                            <p><span className="font-semibold">Tipo de Documento:</span> {item.tipo_documento}</p>
+                                            <p><span className="font-semibold">Tipo de Responsabilidad:</span> {item.tipo_responsabilidad}</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p>No hay registros en Contraloría.</p>
+                                )}
                             </div>
                         </div>
                     )}
